@@ -3,40 +3,36 @@ package com.example.inktextil.ui.theme
 import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+// Definimos los colores para el modo claro (Light Blue)
+private val LightColorScheme = lightColorScheme(
+    primary = Color(0xFF03A9F4),  // Azul 500
+    primaryContainer = Color(0xFF29B6F6),  // Azul 400
+    secondary = Color(0xFF81D4FA),  // Azul 200
+    background = Color(0xFFE1F5FE),  // Azul 50
+    surface = Color(0xFFB3E5FC),  // Azul 100
+    onPrimary = Color.White,
+    onBackground = Color.Black
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
+// Definimos los colores para el modo oscuro (Light Blue 800-900 con detalles en Cyan)
+private val DarkColorScheme = darkColorScheme(
+    primary = Color(0xFF0277BD),  // Azul 800
+    primaryContainer = Color(0xFF01579B),  // Azul 900
+    secondary = Color(0xFF00BCD4),  // Cyan 500 (detalle)
+    background = Color(0xFF01579B),  // Azul 900
+    surface = Color(0xFF0277BD),  // Azul 800
     onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    onBackground = Color.LightGray
 )
 
 @Composable
 fun InkTextilTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
@@ -45,7 +41,6 @@ fun InkTextilTheme(
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
