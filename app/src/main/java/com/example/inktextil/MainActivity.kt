@@ -28,6 +28,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(paddingValues)
                     )
                     LoginScreen(navController = rememberNavController())
+                    //hola
                 }
             }
         }
