@@ -9,6 +9,5 @@ import androidx.navigation.compose.composable
 fun SetUpNavGraph(navController: NavHostController, modifier: Modifier) {
     NavHost(navController = navController, startDestination = "login") {
         composable("login") { LoginScreen(navController) }
-        // Agrega más pantallas aquí si las necesitas
     }
 }

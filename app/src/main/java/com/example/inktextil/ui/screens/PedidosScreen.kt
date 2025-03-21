@@ -25,9 +25,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 
+@Preview(showBackground = true)
 @Composable
 fun PedidosScreen(){
         Column(modifier = Modifier.fillMaxSize()) {
@@ -36,7 +40,7 @@ fun PedidosScreen(){
                 text = "MIS PEDIDOS",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(16.dp),
             )
 
             // Barra de búsqueda y botón de filtro
@@ -54,7 +58,7 @@ fun PedidosScreen(){
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Button(onClick = { /* Acción de filtro */ }) {
-                    Text("Filtrar")
+                    Text("Buscar")
                 }
             }
 
@@ -63,15 +67,15 @@ fun PedidosScreen(){
                 modifier = Modifier.weight(1f),
                 contentPadding = PaddingValues(vertical = 16.dp)
             ) {
-                items(5) { // Simulación de 5 elementos
-                    PedidoItem()
+                items(10) { index -> // Simulación de 5 elementos
+                    PedidoItem(itemCount = index + 1)
                 }
             }
         }
     }
 
     @Composable
-    fun PedidoItem() {
+    fun PedidoItem(itemCount: Int) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -81,7 +85,7 @@ fun PedidosScreen(){
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Lorem ipsum dolor sit amet et",
+                text = "Pedido #$itemCount",
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(8.dp))
