@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
-import androidx.lint.kotlin.metadata.Visibility
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.inktextil.R
@@ -166,7 +165,6 @@ fun SocialButton(
         }
     }
 }
-
 // Vista previa
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
