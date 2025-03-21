@@ -1,4 +1,5 @@
 package com.example.inktextil.ui.screens
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -6,6 +7,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
@@ -22,7 +26,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
+import androidx.lint.kotlin.metadata.Visibility
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.inktextil.R
@@ -31,6 +37,7 @@ import com.example.inktextil.R
 fun LoginScreen(navController: NavHostController) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var passwordVisible by remember { mutableStateOf(false) } // Para controlar la visibilidad de la contraseña
 
     Column(
         modifier = Modifier
@@ -45,7 +52,7 @@ fun LoginScreen(navController: NavHostController) {
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 16.dp)
         )
-        
+
         OutlinedTextField(
             value = username,
             onValueChange = { username = it },
@@ -61,9 +68,17 @@ fun LoginScreen(navController: NavHostController) {
             onValueChange = { password = it },
             label = { Text("Contraseña") },
             leadingIcon = { Icon(Icons.Filled.Lock, contentDescription = "Contraseña") },
-            visualTransformation = PasswordVisualTransformation(),
+            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            trailingIcon = {
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Icon(
+                        imageVector = if (passwordVisible) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp,
+                        contentDescription = "Mostrar/Ocultar Contraseña"
+                    )
+                }
+            }
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -72,16 +87,15 @@ fun LoginScreen(navController: NavHostController) {
             Text("¿Olvidaste tu contraseña?", color = Color.Blue)
         }
 
-
         Button(
             onClick = { /* Acción de inicio de sesión */ },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Ingresar")
         }
+
         Spacer(modifier = Modifier.height(25.dp))
         Text("Registrarse via...", color = Color.Blue)
-
 
         Spacer(modifier = Modifier.height(8.dp))
         SocialButton(iconRes = R.drawable.img_1, text = "Registrarse via Google", bgColor = Color(0xFF4285F4))
@@ -94,9 +108,9 @@ fun LoginScreen(navController: NavHostController) {
         Spacer(modifier = Modifier.height(8.dp))
         SocialButton(iconRes = R.drawable.img, text = "Registrarse via Gmail", bgColor = Color(0xFFD93025))
         Spacer(modifier = Modifier.height(12.dp))
-
     }
 }
+
 @Composable
 fun SocialButton(
     iconRes: Int,
@@ -152,7 +166,6 @@ fun SocialButton(
         }
     }
 }
-
 
 // Vista previa
 @Preview(showBackground = true, showSystemUi = true)
