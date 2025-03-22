@@ -1,16 +1,12 @@
 package com.example.inktextil.ui.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -21,35 +17,23 @@ fun DatosScreen() {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+
         Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(
-                "DATOS",
-                style = MaterialTheme.typography.titleMedium.copy(fontSize = 20.sp)
-            )
             TextField(
                 value = "",
                 onValueChange = {},
-                placeholder = { Text("Buscar") },
-                modifier = Modifier.width(200.dp)
+                placeholder = { Text("Username") },
+                modifier = Modifier.weight(1f)
             )
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        TextField(
-            value = "",
-            onValueChange = {},
-            placeholder = { Text("Username") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Button(
-            onClick = {},
-            modifier = Modifier.align(alignment = androidx.compose.ui.Alignment.End)
-        ) {
-            Text("Guardar")
+            Button(
+                onClick = {},
+            ) {
+                Text("Guardar")
+            }
         }
 
         TextField(
@@ -61,7 +45,7 @@ fun DatosScreen() {
         TextField(
             value = "",
             onValueChange = {},
-            placeholder = { Text("Dirección 1") },
+            placeholder = { Text("Direccion 1") },
             modifier = Modifier.fillMaxWidth()
         )
         TextField(
@@ -76,7 +60,7 @@ fun DatosScreen() {
         TextField(
             value = "",
             onValueChange = {},
-            placeholder = { Text("C.P") },
+            placeholder = { Text("C.p") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -90,8 +74,6 @@ fun DatosScreen() {
         )
 
         Spacer(modifier = Modifier.weight(1f))
-
-        BottomNavigationBars()
     }
 }
 
@@ -134,25 +116,10 @@ fun DropdownMenuField(label: String, items: List<String>) {
     }
 }
 
-@Composable
-fun BottomNavigationBars() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.DarkGray)
-            .padding(12.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly
-    ) {
-        Text("Inicio", color = Color.White)
-        Text("Cuenta", color = Color.White)
-        Text("Carrito", color = Color.White)
-        Text("Menú", color = Color.White)
-    }
-}
-
-
+@Preview(showBackground = true)
 @Composable
 fun DatosScreenPreview() {
-    DatosScreen()
+    MaterialTheme {
+        DatosScreen()
+    }
 }
-
