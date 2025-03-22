@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 
 @Preview(showBackground = true)
 @Composable
-fun ProfileScreen() {
+fun Menu() {
     Column(
         modifier = Modifier
             .fillMaxSize()
