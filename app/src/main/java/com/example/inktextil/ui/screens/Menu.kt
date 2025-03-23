@@ -1,51 +1,46 @@
 package com.example.inktextil.ui.screens
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import com.example.inktextil.ui.components.NavBar
+import com.example.inktextil.ui.components.TopBar
 
-@Preview(showBackground = true)
 @Composable
-fun Menu() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+fun Menu(navController: NavHostController) {
+    Scaffold(
+        topBar = { TopBar(navController) },
+        bottomBar = { NavBar(navController) }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Spacer(modifier = Modifier.height(16.dp))
+            MenuButton(text = "Datos", onClick = { navController.navigate("datos") })
+            MenuButton(text = "Pedidos", onClick = { navController.navigate("pedidos") })
+            MenuButton(text = "Pagos", onClick = { navController.navigate("pagos") })
+            MenuButton(text = "Mis diseños", onClick = { navController.navigate("mis_diseños") })
+            MenuButton(text = "Wish list", onClick = { navController.navigate("wishlist") })
+            MenuButton(text = "Historial", onClick = { navController.navigate("historial") })
+        }
+    }
+}
+
+@Composable
+fun MenuButton(text: String, onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.medium,
+        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
     ) {
-        Spacer(modifier = Modifier.height(200.dp))
-
-        Button(onClick = {}, modifier = Modifier.fillMaxWidth()) {
-            Text("Datos")
-        }
-        Button(onClick = {}, modifier = Modifier.fillMaxWidth()) {
-            Text("Pedidos")
-        }
-        Button(onClick = {}, modifier = Modifier.fillMaxWidth()) {
-            Text("Pagos")
-        }
-        Button(onClick = {}, modifier = Modifier.fillMaxWidth()) {
-            Text("Mis diseños")
-        }
-        Button(onClick = {}, modifier = Modifier.fillMaxWidth()) {
-            Text("Wish list")
-        }
-        Button(onClick = {}, modifier = Modifier.fillMaxWidth()) {
-            Text("Historial")
-        }
-
-        Spacer(modifier = Modifier.weight(1f))
+        Text(text, style = MaterialTheme.typography.bodyLarge)
     }
 }

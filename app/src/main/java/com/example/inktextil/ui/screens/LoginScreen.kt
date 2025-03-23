@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.inktextil.R
-
 @Composable
 fun LoginScreen(navController: NavHostController) {
     var username by remember { mutableStateOf("") }
@@ -45,7 +44,7 @@ fun LoginScreen(navController: NavHostController) {
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 16.dp)
         )
-        
+
         OutlinedTextField(
             value = username,
             onValueChange = { username = it },
@@ -72,16 +71,17 @@ fun LoginScreen(navController: NavHostController) {
             Text("¿Olvidaste tu contraseña?", color = Color.Blue)
         }
 
-
         Button(
-            onClick = { /* Acción de inicio de sesión */ },
+            onClick = {
+                navController.navigate("articles") // Navega a ProfileArticles
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Ingresar")
         }
+
         Spacer(modifier = Modifier.height(25.dp))
         Text("Registrarse via...", color = Color.Blue)
-
 
         Spacer(modifier = Modifier.height(8.dp))
         SocialButton(iconRes = R.drawable.img_1, text = "Registrarse via Google", bgColor = Color(0xFF4285F4))
@@ -95,8 +95,13 @@ fun LoginScreen(navController: NavHostController) {
         SocialButton(iconRes = R.drawable.img, text = "Registrarse via Gmail", bgColor = Color(0xFFD93025))
         Spacer(modifier = Modifier.height(12.dp))
 
+        // Botón de registro en la parte inferior
+        TextButton(onClick = { navController.navigate("RegisterScreen") }) {
+            Text("¿No tiene cuenta? Regístrate", color = Color.Blue)
+        }
     }
 }
+
 @Composable
 fun SocialButton(
     iconRes: Int,
@@ -150,6 +155,7 @@ fun SocialButton(
                 )
             }
         }
+
     }
 }
 

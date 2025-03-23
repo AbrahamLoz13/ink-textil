@@ -15,10 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -30,14 +27,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.inktextil.R
+import com.example.inktextil.ui.components.NavBar
+import com.example.inktextil.ui.components.TopBar
 
-@Preview(showBackground = true)
 @Composable
-fun PedidosScreen(){
-        Column(modifier = Modifier.fillMaxSize()) {
+fun PedidosScreen(navController: NavHostController) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        // TopBar
+        TopBar(navController = navController)
+
+        // Contenido principal
+        Column(modifier = Modifier.weight(1f)) {
             // Encabezado
             Text(
                 text = "MIS PEDIDOS",
@@ -46,64 +48,49 @@ fun PedidosScreen(){
                 modifier = Modifier.padding(16.dp),
             )
 
-            // Barra de búsqueda y botón de filtro
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                TextField(
-                    value = "",
-                    onValueChange = {},
-                    placeholder = { Text("Buscar pedido") },
-                    modifier = Modifier.weight(1f)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Button(onClick = { /* Acción de filtro */ }) {
-                    Text("Buscar")
-                }
-            }
+
 
             // Lista de pedidos
             LazyColumn(
                 modifier = Modifier.weight(1f),
                 contentPadding = PaddingValues(vertical = 16.dp)
             ) {
-                items(10) { index -> // Simulación de 5 elementos
+                items(10) { index -> // Simulación de 10 elementos
                     PedidoItem(itemCount = index + 1)
                 }
             }
         }
-    }
 
-    @Composable
-    fun PedidoItem(itemCount: Int) {
-        Row(
+        // NavBar
+        NavBar(navController = navController)
+    }
+}
+
+@Composable
+fun PedidoItem(itemCount: Int) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = "Pedido #$itemCount",
+            modifier = Modifier.weight(1f)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .size(50.dp)
+                .background(Color.LightGray)
         ) {
-            Text(
-                text = "Pedido #$itemCount",
-                modifier = Modifier.weight(1f)
+            Image(
+                painter = painterResource(R.drawable.playera1),
+                contentDescription = "Image of the product",
+                modifier = Modifier.align(Alignment.Center)
             )
-            Spacer(modifier = Modifier.width(8.dp))
-            Box(
-                modifier = Modifier
-                    .size(50.dp)
-                    .background(Color.LightGray)
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.playera1),
-                    contentDescription = "Image of the product",
-                    modifier = Modifier.align(Alignment.Center)
-                )
-            }
         }
     }
-
-
+}
