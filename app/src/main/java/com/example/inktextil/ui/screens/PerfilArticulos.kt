@@ -9,9 +9,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.navigation.NavHostController
 
 @Composable
-fun InicioArticulo() {
+fun InicioArticulo(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -68,10 +69,3 @@ fun InicioArticulo() {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun InicioArticuloPreview() {
-    MaterialTheme {
-        InicioArticulo()
-    }
-}
