@@ -30,7 +30,7 @@ fun NavBar(navController: NavController) {
         val items = listOf(
             Pair("Inicio", Icons.Filled.Home) to "articles",
             Pair("Cuenta", Icons.Filled.Person) to "datos",
-            Pair("Carrito", Icons.Filled.ShoppingCart) to "cart",
+            Pair("Carrito", Icons.Filled.ShoppingCart) to "carrito",
             Pair("Menú", Icons.Filled.Menu) to "menu"
         )
 

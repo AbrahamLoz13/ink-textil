@@ -26,7 +26,7 @@ fun Menu(navController: NavHostController) {
             MenuButton(text = "Datos", onClick = { navController.navigate("datos") })
             MenuButton(text = "Pedidos", onClick = { navController.navigate("pedidos") })
             MenuButton(text = "Pagos", onClick = { navController.navigate("pagos") })
-            MenuButton(text = "Mis diseños", onClick = { navController.navigate("mis_diseños") })
+            MenuButton(text = "Mis diseños", onClick = { navController.navigate("misdiseños") })
             MenuButton(text = "Wish list", onClick = { navController.navigate("wishlist") })
             MenuButton(text = "Historial", onClick = { navController.navigate("historial") })
         }
