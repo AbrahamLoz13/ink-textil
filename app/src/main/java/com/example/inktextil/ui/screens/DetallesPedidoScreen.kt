@@ -60,7 +60,8 @@ fun DetallesPedidoScreen(){
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Button(onClick = {  }) {
-                    Text("Buscar")
+                    Text("Buscar",
+                        fontSize = 16.sp)
                 }
             }
 
@@ -69,7 +70,7 @@ fun DetallesPedidoScreen(){
 
             Text(
                 text = "PLAYERA PULP FICTION",
-                fontSize = 18.sp,
+                fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
@@ -97,6 +98,9 @@ fun DetallesPedidoScreen(){
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
                     text = "Este diseño es ideal para personas para personas amantes del cine",
+                    color = Color.Black,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
                     modifier = Modifier.width(180.dp),
                     textAlign = TextAlign.Justify
                 )
@@ -112,7 +116,8 @@ fun DetallesPedidoScreen(){
                     .padding(horizontal = 16.dp),
                 colors = ButtonDefaults.buttonColors(Color.Gray)
             ) {
-                Text("Volver a comprar")
+                Text("Volver a comprar",
+                    fontSize = 18.sp)
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -128,7 +133,8 @@ fun DetallesPedidoScreen(){
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
                 ) {
-                    Text("DATOS DE ENVÍO")
+                    Text("Datos de envío",
+                        fontSize = 18.sp)
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -139,7 +145,8 @@ fun DetallesPedidoScreen(){
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
                 ) {
-                    Text("DATOS DE PAGO")
+                    Text("Datos de pago",
+                        fontSize = 18.sp)
                 }
             }
 
