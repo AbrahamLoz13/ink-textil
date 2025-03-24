@@ -29,6 +29,16 @@ fun Menu(navController: NavHostController) {
             MenuButton(text = "Mis diseños", onClick = { navController.navigate("misdiseños") })
             MenuButton(text = "Wish list", onClick = { navController.navigate("wishlist") })
             MenuButton(text = "Historial", onClick = { navController.navigate("historial") })
+
+            Spacer(modifier = Modifier.weight(1f)) // Empuja el botón de cerrar sesión hacia abajo
+
+            Button(
+                onClick = { navController.navigate("login") },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+            ) {
+                Text("Cerrar sesión", style = MaterialTheme.typography.bodyLarge)
+            }
         }
     }
 }
