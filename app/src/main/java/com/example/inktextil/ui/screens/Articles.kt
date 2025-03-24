@@ -8,8 +8,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,11 +27,11 @@ data class Article(val title: String, val image: Int)
 @Composable
 fun ArticlesScreen(navController: NavController) {
     val articles = listOf(
-        Article("Camiseta", R.drawable.logo),
-        Article("Sudadera", R.drawable.x),
-        Article("Pantalón", R.drawable.ic_launcher_background),
-        Article("Gorra", R.drawable.img),
-        Article("Chaqueta", R.drawable.img)
+        Article("Camiseta", R.drawable.logopa),
+        Article("Sudadera", R.drawable.logos),
+        Article("Pantalón", R.drawable.logopan),
+        Article("Gorra", R.drawable.logogorr),
+        Article("Chaqueta", R.drawable.logocha)
     )
 
     Scaffold(
@@ -71,26 +73,33 @@ fun ArticleCard(article: Article, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp)
-            .clickable { onClick() },
-        shape = RoundedCornerShape(12.dp),
+            .height(250.dp)
+            .clickable { onClick() }
+            .padding(4.dp),
+        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 6.dp)
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 8.dp)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            Image(
-                painter = painterResource(id = article.image),
-                contentDescription = article.title,
+            Box(
                 modifier = Modifier
-                    .height(140.dp)
-                    .fillMaxWidth(),
-                contentScale = ContentScale.Crop
-            )
+                    .fillMaxWidth()
+                    .height(160.dp)
+                    .clip(RoundedCornerShape(16.dp))
+            ) {
+                Image(
+                    painter = painterResource(id = article.image),
+                    contentDescription = article.title,
+                    contentScale = ContentScale.Fit, // Ajuste para que la imagen encaje
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = article.title,
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp, fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier.padding(start = 8.dp, end = 8.dp)
             )
         }
     }

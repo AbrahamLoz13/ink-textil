@@ -16,11 +16,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -28,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.inktextil.R
 import com.example.inktextil.ui.components.NavBar
 import com.example.inktextil.ui.components.TopBar
@@ -48,8 +53,6 @@ fun PedidosScreen(navController: NavHostController) {
                 modifier = Modifier.padding(16.dp),
             )
 
-
-
             // Lista de pedidos
             LazyColumn(
                 modifier = Modifier.weight(1f),
@@ -68,29 +71,45 @@ fun PedidosScreen(navController: NavHostController) {
 
 @Composable
 fun PedidoItem(itemCount: Int) {
-    Row(
+    Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .shadow(8.dp, RoundedCornerShape(16.dp)) // Añadido sombra para mayor profundidad
+            .border(1.dp, Color.LightGray, RoundedCornerShape(16.dp)),
+        shape = RoundedCornerShape(16.dp), // Bordes redondeados // Sombra suave
+        colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
-        Text(
-            text = "Pedido #$itemCount",
-            modifier = Modifier.weight(1f)
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Box(
+        Row(
             modifier = Modifier
-                .size(50.dp)
-                .background(Color.LightGray)
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(R.drawable.playera1),
-                contentDescription = "Image of the product",
-                modifier = Modifier.align(Alignment.Center)
+            Text(
+                text = "Pedido #$itemCount",
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.onSurface
             )
+            Spacer(modifier = Modifier.width(8.dp))
+            Box(
+                modifier = Modifier
+                    .size(50.dp)
+                    .background(Color.Gray, shape = RoundedCornerShape(10.dp))
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.playera1),
+                    contentDescription = "Image of the product",
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewPedidosScreen() {
+    PedidosScreen(navController = rememberNavController())
 }

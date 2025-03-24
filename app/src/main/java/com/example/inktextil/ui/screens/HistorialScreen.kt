@@ -13,10 +13,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.inktextil.ui.components.NavBar
 import com.example.inktextil.ui.components.TopBar
 import com.example.inktextil.R
@@ -78,8 +80,6 @@ fun HistorialScreen(navController: NavHostController) {
             }
             NavBar(navController)
         }
-
-
     }
 }
 
@@ -112,4 +112,11 @@ fun PedidosItem(index: Int) {
             )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewHistorialScreen() {
+    val navController = rememberNavController()
+    HistorialScreen(navController)
 }
