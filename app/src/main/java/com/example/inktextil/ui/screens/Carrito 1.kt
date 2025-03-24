@@ -12,7 +12,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.inktextil.ui.components.NavBar
 import com.example.inktextil.ui.components.TopBar
 
@@ -62,8 +64,6 @@ fun CarritoScreen(navController: NavHostController) {
 
             NavBar(navController)
         }
-
-
     }
 }
 
@@ -103,4 +103,8 @@ fun CarritoItem() {
     }
 }
 
-
+@Preview(showBackground = true)
+@Composable
+fun CarritoScreenPreview() {
+    CarritoScreen(navController = rememberNavController())
+}

@@ -10,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -130,5 +131,12 @@ fun SocialCircleButton(imageRes: Int, description: String, onClick: () -> Unit) 
         )
     }
 }
+@Preview(showBackground = true)
+@Composable
+fun PreviewRegisterSocialMediaScreen() {
+    // Usamos un NavHostController simulado, puedes cambiarlo por uno real si lo necesitas
+    RegisterSocialMediaScreen(onEmailRegister = NavHostController(context = LocalContext.current))
+}
+
 
 
