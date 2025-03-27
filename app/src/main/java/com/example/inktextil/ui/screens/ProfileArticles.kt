@@ -25,7 +25,7 @@ fun ProfileScreen(navController: NavHostController) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        TopBar(navController)
+        TopBar(navController, "Finalizar compra")
 
         val options = listOf("Datos", "Pedidos", "Pagos", "Mis diseños", "Wish list", "Historial")
         options.forEach { option ->
@@ -43,7 +43,10 @@ fun ProfileScreen(navController: NavHostController) {
 
         Spacer(modifier = Modifier.weight(1f))
 
-        NavBar(navController)
+        NavBar(
+            navController, Modifier
+                .align(Alignment.BottomCenter as Alignment.Horizontal)
+        )
     }
 }
 

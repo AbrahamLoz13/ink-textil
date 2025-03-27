@@ -27,7 +27,7 @@ fun PagosScreen(navController: NavHostController) {
     var address by remember { mutableStateOf("") }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        TopBar(navController)
+        TopBar(navController, "Finalizar compra")
 
         Column(
             modifier = Modifier
@@ -87,7 +87,10 @@ fun PagosScreen(navController: NavHostController) {
             }
             Spacer(modifier = Modifier.weight(1f))
 
-            NavBar(navController)
+            NavBar(
+                navController, Modifier
+                    .align(Alignment.BottomCenter as Alignment.Horizontal)
+            )
         }
 
 

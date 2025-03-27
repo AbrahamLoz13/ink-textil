@@ -1,7 +1,6 @@
 package com.example.inktextil.ui.screens
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -18,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.inktextil.R
 import com.example.inktextil.ui.components.NavBar
 import com.example.inktextil.ui.components.TopBar
@@ -26,7 +26,7 @@ import com.example.inktextil.ui.components.TopBar
 fun WishListScreen(navController: NavController) {
     Column(modifier = Modifier.fillMaxSize()) {
         // TopBar
-        TopBar(navController = navController)
+        TopBar(navController = navController, title = "Finalizar compra")
 
         // Contenido principal
         Column(modifier = Modifier.weight(1f)) {
@@ -67,7 +67,10 @@ fun WishListScreen(navController: NavController) {
         }
 
         // NavBar
-        NavBar(navController = navController)
+        NavBar(
+            navController = navController, modifier = Modifier
+                .align(Alignment.BottomCenter as Alignment.Horizontal)
+        )
     }
 }
 
@@ -107,5 +110,14 @@ fun ProductItem(navController: NavController) {
             }
         }
     }
+}
+@Preview(showBackground = true)
+@Composable
+fun PreviewWishListScreen() {
+    // Usamos un NavController simulado, ya que no podemos crear uno real en el preview
+    val navController = rememberNavController()
+
+    // Llamamos a la función WishListScreen con el NavController
+    WishListScreen(navController = navController)
 }
 

@@ -27,7 +27,7 @@ fun DisenoScreen(navController: NavHostController) {
     var largo by remember { mutableStateOf("Seleccionar") }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        TopBar(navController)
+        TopBar(navController, "Finalizar compra")
 
         Column(
             modifier = Modifier
@@ -91,7 +91,10 @@ fun DisenoScreen(navController: NavHostController) {
             }
 
             Spacer(modifier = Modifier.weight(1f))
-            NavBar(navController)
+            NavBar(
+                navController, Modifier
+                    .align(Alignment.BottomCenter as Alignment.Horizontal)
+            )
 
         }
 

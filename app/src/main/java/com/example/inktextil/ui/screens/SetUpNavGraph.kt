@@ -24,12 +24,16 @@ import androidx.navigation.compose.composable
             composable("perfilArticulos") { InicioArticulo(navController) }
             composable("profileArticles") { ProfileScreen(navController) }
             composable("wishlist") { WishListScreen(navController) }
-            composable("pedidos") { DetallesPedidoScreen(navController) }
+            composable("detallepedidos") { DetallesPedidoScreen(navController) }
             composable("carrito") { CarritoScreen(navController) }
             composable("historial") { HistorialScreen(navController) }
             composable("misdiseños") { DisenoScreen(navController) }
             composable("forgot") { ForgotPasswordScreen(navController) }
-            composable("pagos") { PagosScreen(navController) }
+            composable("checkout") { CheckoutScreen(navController) }
+            composable("exitoso") { PaymentSuccessScreen(navController) }
+
+
+
 
 
         }

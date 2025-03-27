@@ -69,7 +69,6 @@ fun ForgotPasswordScreen(navController: NavController) {
                 } else {
                     emailError = false
                     // Aquí iría la lógica para enviar el correo de recuperación
-                    navController.navigate("emailSentScreen") // Navegar a la pantalla de correo enviado
                 }
             },
             modifier = Modifier.fillMaxWidth()
@@ -79,7 +78,7 @@ fun ForgotPasswordScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        TextButton(onClick = { navController.navigate("loginScreen") }) {
+        TextButton(onClick = { navController.navigate("login") }) {
             Text(text = "Volver al inicio de sesión")
         }
     }
