@@ -17,6 +17,9 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.foundation.layout.navigationBarsPadding // 👈 Esto es importante
 
 @Composable
 fun NavBar(navController: NavController) {
@@ -24,6 +27,7 @@ fun NavBar(navController: NavController) {
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.primaryContainer)
+            .navigationBarsPadding() // 👈 Esto evita que se empalme con la barra del sistema
             .padding(vertical = 12.dp, horizontal = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {

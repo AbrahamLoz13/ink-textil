@@ -1,5 +1,4 @@
 package com.example.inktextil.ui.screens
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -40,9 +39,7 @@ fun DetallesPedidoScreen(navController: NavHostController) {
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
-
             var searchQuery by remember { mutableStateOf("") }
-
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -64,9 +61,7 @@ fun DetallesPedidoScreen(navController: NavHostController) {
                     Text("Buscar", style = MaterialTheme.typography.bodyLarge)
                 }
             }
-
             Spacer(modifier = Modifier.height(16.dp))
-
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -79,7 +74,6 @@ fun DetallesPedidoScreen(navController: NavHostController) {
                     Pedido("CAMISETA NIRVANA", "Estilo clásico rockero.", R.drawable.playera1, "Envío a Puebla, pago con tarjeta."),
                     Pedido("CHAQUETA VINTAGE", "Diseño retro y elegante.", R.drawable.logocha, "Envío a Querétaro, pago con transferencia.")
                 )
-
                 pedidos.forEach { pedido ->
                     PedidoItem(navController, pedido)
                     Spacer(modifier = Modifier.height(16.dp))
@@ -88,7 +82,6 @@ fun DetallesPedidoScreen(navController: NavHostController) {
         }
     }
 }
-
 @Composable
 fun PedidoItem(navController: NavHostController, pedido: Pedido) {
     Card(
@@ -104,9 +97,7 @@ fun PedidoItem(navController: NavHostController, pedido: Pedido) {
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
-
             Spacer(modifier = Modifier.height(8.dp))
-
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -131,9 +122,7 @@ fun PedidoItem(navController: NavHostController, pedido: Pedido) {
                     )
                 }
             }
-
             Spacer(modifier = Modifier.height(16.dp))
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -156,13 +145,11 @@ fun PedidoItem(navController: NavHostController, pedido: Pedido) {
         }
     }
 }
-
 @Preview(showBackground = true)
 @Composable
 fun DetallesPedidoScreenPreview() {
     DetallesPedidoScreen(navController = rememberNavController())
 }
-
 data class Pedido(
     val titulo: String,
     val descripcion: String,
