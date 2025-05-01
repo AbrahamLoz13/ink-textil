@@ -2,6 +2,8 @@ package com.example.inktextil.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -26,6 +28,8 @@ fun DisenoScreen(navController: NavHostController) {
     var tipoCuello by remember { mutableStateOf("Seleccionar") }
     var largo by remember { mutableStateOf("Seleccionar") }
 
+    val scrollState = rememberScrollState()
+
     Column(modifier = Modifier.fillMaxSize()) {
         TopBar(navController)
 
@@ -33,6 +37,7 @@ fun DisenoScreen(navController: NavHostController) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
+                .verticalScroll(scrollState)
         ) {
             Text(text = "MI DISEÑO", fontSize = 20.sp, color = Color.Black)
             Spacer(modifier = Modifier.height(8.dp))
@@ -79,27 +84,27 @@ fun DisenoScreen(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
                 Button(onClick = { /* Guardar lógica */ }) {
                     Text("Guardar")
                 }
-                Button(onClick = { /* Eliminar lógica */ }, colors = ButtonDefaults.buttonColors(Color.Red)) {
+                Button(
+                    onClick = { /* Eliminar lógica */ },
+                    colors = ButtonDefaults.buttonColors(Color.Red)
+                ) {
                     Text("Eliminar")
                 }
-
-
             }
 
-            Spacer(modifier = Modifier.weight(1f))
-            NavBar(navController)
-
+            Spacer(modifier = Modifier.height(32.dp))
         }
 
-
-
+        NavBar(navController)
     }
-
-
 }
 
 @Composable
@@ -113,10 +118,13 @@ fun DropdownButton(label: String, options: List<String>, selected: String, onOpt
         }
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             options.forEach { option ->
-                DropdownMenuItem(text = { Text(option) }, onClick = {
-                    onOptionSelected(option)
-                    expanded = false
-                })
+                DropdownMenuItem(
+                    text = { Text(option) },
+                    onClick = {
+                        onOptionSelected(option)
+                        expanded = false
+                    }
+                )
             }
         }
     }

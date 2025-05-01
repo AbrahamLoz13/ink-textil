@@ -19,10 +19,8 @@ import androidx.navigation.compose.composable
             composable("menu") { Menu(navController) }
             composable("articles") { ArticlesScreen(navController) }
             composable("datos") { DatosScreen(navController) }
-            composable("detallesArticulo") { DetallesArticulo(navController) }
+            composable("detallesArticulo") { CatalogoPlayeras(navController) }
             composable("pedidos") { PedidosScreen(navController) }
-            composable("perfilArticulos") { InicioArticulo(navController) }
-            composable("profileArticles") { ProfileScreen(navController) }
             composable("wishlist") { WishListScreen(navController) }
             composable("detallepedidos") { DetallesPedidoScreen(navController) }
             composable("carrito") { CarritoScreen(navController) }
@@ -30,6 +28,10 @@ import androidx.navigation.compose.composable
             composable("misdiseños") { DisenoScreen(navController) }
             composable("forgot") { ForgotPasswordScreen(navController) }
             composable("pagos") { PagosScreen(navController) }
+            composable("sudaderasScreen") { SudaderasScreen(navController) }
+            composable("pantalonesScreen") { PantalonesScreen(navController) }
+            composable("gorrasScreen") { GorrasScreen(navController) }
+            composable("chaquetasScreen") { ChaquetasScreen(navController) }
 
 
         }

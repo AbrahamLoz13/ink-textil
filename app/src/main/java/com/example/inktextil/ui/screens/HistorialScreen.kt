@@ -1,5 +1,6 @@
 package com.example.inktextil.ui.screens
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -11,65 +12,69 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.inktextil.R
 import com.example.inktextil.ui.components.NavBar
 import com.example.inktextil.ui.components.TopBar
-import com.example.inktextil.R
 
 @Composable
 fun HistorialScreen(navController: NavHostController) {
+    val configuration = LocalConfiguration.current
+    val isPortrait = configuration.orientation == Configuration.ORIENTATION_PORTRAIT
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        TopBar(navController) // ✅ Agregado el TopBar
+        TopBar(navController)
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 16.dp, vertical = 10.dp)
         ) {
-            Text(
-                text = "HISTORIAL",
-                color = colorResource(R.color.Blue900),
-                fontWeight = FontWeight.ExtraBold,
-                fontSize = 20.sp,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 10.dp)
-            )
-
-            // 🔍 Barra de búsqueda
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                TextField(
-                    value = "",
-                    onValueChange = {},
-                    placeholder = { Text("Buscar pedido") },
+            if (isPortrait) {
+                Text(
+                    text = "HISTORIAL",
+                    color = colorResource(R.color.Blue900),
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 20.sp,
                     modifier = Modifier
-                        .weight(1f)
-                        .height(50.dp)
+                        .fillMaxWidth()
+                        .padding(bottom = 10.dp)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
-                Button(
-                    onClick = {},
-                    modifier = Modifier.height(50.dp)
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Buscar")
+                    TextField(
+                        value = "",
+                        onValueChange = {},
+                        placeholder = { Text("Buscar pedido") },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(50.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Button(
+                        onClick = {},
+                        modifier = Modifier.height(50.dp)
+                    ) {
+                        Text("Buscar")
+                    }
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // 📜 Lista de pedidos
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.weight(1f)
@@ -78,6 +83,7 @@ fun HistorialScreen(navController: NavHostController) {
                     PedidosItem(index)
                 }
             }
+
             NavBar(navController)
         }
     }

@@ -20,17 +20,16 @@ import com.example.inktextil.R
 import com.example.inktextil.ui.components.NavBar
 import com.example.inktextil.ui.components.TopBar
 
-// Data class para representar un artículo
-data class Article(val title: String, val image: Int, val description: String)
+data class Article(val title: String, val image: Int, val description: String, val route: String)
 
 @Composable
 fun ArticlesScreen(navController: NavController) {
     val articles = listOf(
-        Article("Camisetas", R.drawable.logopa, "Explora nuestra colección de camisetas de alta calidad."),
-        Article("Sudaderas", R.drawable.logos, "Descubre sudaderas cómodas y con diseños únicos."),
-        Article("Pantalones", R.drawable.logopan, "Variedad de pantalones para cualquier ocasión."),
-        Article("Gorras", R.drawable.logogorr, "Elige entre múltiples estilos de gorras ajustables."),
-        Article("Chaquetas", R.drawable.logocha, "Chaquetas ligeras y modernas para cualquier temporada.")
+        Article("Camisetas", R.drawable.logopa, "Explora nuestra colección de camisetas de alta calidad.", "detallesArticulo"),
+        Article("Sudaderas", R.drawable.sudaderaong, "Descubre sudaderas cómodas y con diseños únicos.", "sudaderasScreen"),
+        Article("Pantalones", R.drawable.logopan, "Variedad de pantalones para cualquier ocasión.", "pantalonesScreen"),
+        Article("Gorras", R.drawable.gorralog, "Elige entre múltiples estilos de gorras ajustables.", "gorrasScreen"),
+        Article("Chaquetas", R.drawable.logocha, "Chaquetas ligeras y modernas para cualquier temporada.", "chaquetasScreen")
     )
 
     Scaffold(
@@ -56,7 +55,7 @@ fun ArticlesScreen(navController: NavController) {
             ) {
                 items(articles) { article ->
                     ArticleCard(article) {
-                        navController.navigate("detallesArticulo")
+                        navController.navigate(article.route)
                     }
                 }
             }

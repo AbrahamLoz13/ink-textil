@@ -17,7 +17,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.inktextil.ui.components.NavBar
 import com.example.inktextil.ui.components.TopBar
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.safeContentPadding
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PagosScreen(navController: NavHostController) {
     var selectedCard by remember { mutableStateOf<String?>(null) }
@@ -26,94 +31,182 @@ fun PagosScreen(navController: NavHostController) {
     var expiryYear by remember { mutableStateOf("2025") }
     var address by remember { mutableStateOf("") }
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        TopBar(navController)
-
-        Column(
+    Scaffold(
+        topBar = { TopBar(navController) },
+        bottomBar = {
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .background(Color.White)
+                    .navigationBarsPadding()
+            ) {
+                NavBar(navController)
+            }
+        },
+        contentWindowInsets = WindowInsets(0, 0, 0, 0) // evitamos dobles paddings
+    ) { paddingValues ->
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
+                .background(Color(0xFFF5F5F5))
+                .padding(paddingValues)
                 .padding(16.dp)
+                .imePadding(), // se adapta al teclado
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text("TARJETAS Y CUENTAS", fontSize = 20.sp)
-            Spacer(modifier = Modifier.height(8.dp))
+            item {
+                Text("TARJETAS Y CUENTAS", fontSize = 20.sp)
+            }
 
-            LazyColumn(modifier = Modifier.weight(1f)) {
-                items(3) { index ->
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(80.dp)
-                            .background(Color.LightGray, shape = RoundedCornerShape(8.dp))
-                            .clickable { selectedCard = "Card $index" }
-                            .padding(16.dp),
-                        contentAlignment = Alignment.Center
+            items(3) { index ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(80.dp)
+                        .background(
+                            if (selectedCard == "Card $index") Color(0xFFD1C4E9)
+                            else Color.White,
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                        .clickable { selectedCard = "Card $index" }
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("Tarjeta **** **** **** ${1000 + index}")
+                }
+            }
+
+            item {
+                TextField(
+                    value = nameOnCard,
+                    onValueChange = { nameOnCard = it },
+                    label = { Text("Nombre en la tarjeta") },
+                    shape = RoundedCornerShape(12.dp),
+                    colors = TextFieldDefaults.textFieldColors(
+                        containerColor = Color.White,
+                        focusedIndicatorColor = Color(0xFF6200EE),
+                        unfocusedIndicatorColor = Color(0xFFBDBDBD)
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    CustomDropdownField(
+                        label = "Mes",
+                        options = (1..12).map { it.toString().padStart(2, '0') },
+                        selectedOption = expiryMonth,
+                        onOptionSelected = { expiryMonth = it },
+                        modifier = Modifier.weight(1f)
+                    )
+                    CustomDropdownField(
+                        label = "Año",
+                        options = (2025..2035).map { it.toString() },
+                        selectedOption = expiryYear,
+                        onOptionSelected = { expiryYear = it },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
+
+            item {
+                TextField(
+                    value = address,
+                    onValueChange = { address = it },
+                    label = { Text("Dirección de tarjeta") },
+                    shape = RoundedCornerShape(12.dp),
+                    colors = TextFieldDefaults.textFieldColors(
+                        containerColor = Color.White,
+                        focusedIndicatorColor = Color(0xFF6200EE),
+                        unfocusedIndicatorColor = Color(0xFFBDBDBD)
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Button(
+                        onClick = { /* Guardar lógica */ },
+                        shape = RoundedCornerShape(12.dp)
                     ) {
-                        Text("Tarjeta **** **** **** ${1000 + index}")
+                        Text("Guardar")
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Button(
+                        onClick = { /* Eliminar lógica */ },
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                    ) {
+                        Text("Eliminar")
+                    }
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-            TextField(
-                value = nameOnCard,
-                onValueChange = { nameOnCard = it },
-                label = { Text("Nombre en la tarjeta") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                DropdownMenuField(label = "Mes", options = (1..12).map { it.toString().padStart(2, '0') }, selectedOption = expiryMonth) { expiryMonth = it }
-                DropdownMenuField(label = "Año", options = (2025..2035).map { it.toString() }, selectedOption = expiryYear) { expiryYear = it }
+            item {
+                Spacer(modifier = Modifier.height(24.dp))
             }
-            Spacer(modifier = Modifier.height(8.dp))
-
-            TextField(
-                value = address,
-                onValueChange = { address = it },
-                label = { Text("Dirección de tarjeta") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                Button(onClick = { /* Guardar lógica */ }) {
-                    Text("Guardar")
-                }
-                Button(onClick = { /* Eliminar lógica */ }, colors = ButtonDefaults.buttonColors(Color.Red)) {
-                    Text("Eliminar")
-                }
-            }
-            Spacer(modifier = Modifier.weight(1f))
-
-            NavBar(navController)
         }
-
-
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DropdownMenuField(label: String, options: List<String>, selectedOption: String, onOptionSelected: (String) -> Unit) {
+fun CustomDropdownField(
+    label: String,
+    options: List<String>,
+    selectedOption: String,
+    onOptionSelected: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     var expanded by remember { mutableStateOf(false) }
 
-    Box(modifier = Modifier.fillMaxWidth()) {
-        Button(onClick = { expanded = true }) {
-            Text(if (selectedOption.isEmpty()) label else selectedOption)
-        }
-        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            options.forEach { option ->
-                DropdownMenuItem(text = { Text(option) }, onClick = {
-                    onOptionSelected(option)
-                    expanded = false
-                })
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded },
+        modifier = modifier
+    ) {
+        TextField(
+            value = selectedOption,
+            onValueChange = {},
+            readOnly = true,
+            label = { Text(label) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = Color.White,
+                focusedIndicatorColor = Color(0xFF6200EE),
+                unfocusedIndicatorColor = Color(0xFFBDBDBD)
+            ),
+            shape = RoundedCornerShape(12.dp),
+            modifier = Modifier
+                .menuAnchor()
+                .fillMaxWidth()
+        )
+
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            options.forEach { selectionOption ->
+                DropdownMenuItem(
+                    text = { Text(selectionOption) },
+                    onClick = {
+                        onOptionSelected(selectionOption)
+                        expanded = false
+                    }
+                )
             }
         }
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun PreviewPagosScreen() {
     PagosScreen(navController = NavHostController(LocalContext.current))
