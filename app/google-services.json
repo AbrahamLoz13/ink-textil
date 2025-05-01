@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "675854312954",
+    "project_id": "ink-textil",
+    "storage_bucket": "ink-textil.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:675854312954:android:e8179803d99b2438863043",
+        "android_client_info": {
+          "package_name": "com.example.inktextil"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFU3ZXwKlzJ1iR49wFLBsyyWm649UHMiA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

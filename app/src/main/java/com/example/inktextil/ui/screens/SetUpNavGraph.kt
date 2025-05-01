@@ -32,6 +32,8 @@ import androidx.navigation.compose.composable
             composable("pantalonesScreen") { PantalonesScreen(navController) }
             composable("gorrasScreen") { GorrasScreen(navController) }
             composable("chaquetasScreen") { ChaquetasScreen(navController) }
+            composable("checkout") { CheckoutScreen(navController) }
+            composable("confirm") { PagoConfirm(navController) }
 
 
         }

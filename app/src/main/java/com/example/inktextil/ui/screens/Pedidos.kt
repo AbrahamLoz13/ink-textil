@@ -39,7 +39,7 @@ fun DetallesPedidoScreen(navController: NavHostController) {
         ) {
             if (!isLandscape) {
                 Text(
-                    text = "MIS PEDIDOS",
+                    text = "PEDIDOS",
                     style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(bottom = 16.dp)
