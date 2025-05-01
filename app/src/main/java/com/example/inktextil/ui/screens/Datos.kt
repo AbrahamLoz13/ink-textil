@@ -2,6 +2,8 @@ package com.example.inktextil.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -19,68 +21,71 @@ import com.example.inktextil.ui.components.TopBar
 @Composable
 fun DatosScreen(navController: NavHostController) {
     Column(modifier = Modifier.fillMaxSize()) {
-        // TopBar
         TopBar(navController = navController)
 
-        // Contenido principal con fondo de color suave
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-                .background(Color(0xFFF1F1F1)), // Fondo suave
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .weight(1f)
+                .fillMaxWidth()
+                .background(Color(0xFFF5F5F5))
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .verticalScroll(rememberScrollState())
         ) {
-            // Input de Username y Botón Guardar con diseño atractivo
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxWidth()
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
-                TextField(
-                    value = "",
-                    onValueChange = {},
-                    placeholder = { Text("Username", color = Color.Gray) },
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(8.dp),
-                    shape = RoundedCornerShape(12.dp), // Bordes redondeados
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color.White,
-                        focusedIndicatorColor = Color(0xFF6200EE),
-                        unfocusedIndicatorColor = Color(0xFFBDBDBD)
-                    )
-                )
-                Button(
-                    onClick = {},
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .height(50.dp)
-                        .fillMaxHeight(),
-                    shape = RoundedCornerShape(12.dp), // Bordes redondeados
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF6200EE),
-                        contentColor = Color.White
-                    )
-                ) {
-                    Text("Guardar", style = MaterialTheme.typography.bodyLarge)
+                Column(modifier = Modifier.padding(16.dp)) {
+                    // Campo de Username y Botón
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        TextField(
+                            value = "",
+                            onValueChange = {},
+                            placeholder = { Text("Username") },
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = TextFieldDefaults.textFieldColors(
+                                containerColor = Color(0xFFFDFDFD),
+                                focusedIndicatorColor = Color(0xFF6200EE),
+                                unfocusedIndicatorColor = Color(0xFFBDBDBD)
+                            )
+                        )
+                        Button(
+                            onClick = {},
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF6200EE),
+                                contentColor = Color.White
+                            )
+                        ) {
+                            Text("Guardar")
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Campos
+                    CustomTextField("Correo")
+                    CustomTextField("Dirección 1")
+                    CustomTextField("Dirección 2")
+                    DropdownMenuField("Ciudad", listOf("Ciudad A", "Ciudad B", "Ciudad C"))
+                    CustomTextField("C.p")
+                    DropdownMenuField("Colonia", listOf("Colonia X", "Colonia Y", "Colonia Z"))
+                    CustomTextField("Número")
                 }
             }
 
-            // Campos de texto con bordes suaves y foco atractivo
-            CustomTextField(label = "Correo")
-            CustomTextField(label = "Direccion 1")
-            CustomTextField(label = "Dirección 2")
-
-            // Dropdowns mejorados con diseño
-            DropdownMenuField(label = "Ciudad", items = listOf("Ciudad A", "Ciudad B", "Ciudad C"))
-            CustomTextField(label = "C.p")
-            DropdownMenuField(label = "Colonia", items = listOf("Colonia X", "Colonia Y", "Colonia Z"))
-            CustomTextField(label = "Número")
-
-            Spacer(modifier = Modifier.weight(1f))
-            // NavBar
-            NavBar(navController = navController)
+            Spacer(modifier = Modifier.height(16.dp))
         }
+
+        // Barra de navegación fija en la parte inferior
+        NavBar(navController = navController)
     }
 }
 
@@ -97,15 +102,14 @@ fun DropdownMenuField(label: String, items: List<String>) {
         TextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .menuAnchor()
-                .padding(8.dp),
+                .menuAnchor(),
             readOnly = true,
             value = selectedText,
             onValueChange = {},
-            label = { Text(label, color = Color.Gray) },
+            label = { Text(label) },
             shape = RoundedCornerShape(12.dp),
             colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color.White,
+                containerColor = Color(0xFFFDFDFD),
                 focusedIndicatorColor = Color(0xFF6200EE),
                 unfocusedIndicatorColor = Color(0xFFBDBDBD)
             ),
@@ -130,20 +134,19 @@ fun DropdownMenuField(label: String, items: List<String>) {
     }
 }
 
-// Componente para un TextField mejorado con bordes y colores
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomTextField(label: String) {
     TextField(
         value = "",
         onValueChange = {},
-        placeholder = { Text(label, color = Color.Gray) },
+        placeholder = { Text(label) },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(vertical = 4.dp),
         shape = RoundedCornerShape(12.dp),
         colors = TextFieldDefaults.textFieldColors(
-            containerColor = Color.White,
+            containerColor = Color(0xFFFDFDFD),
             focusedIndicatorColor = Color(0xFF6200EE),
             unfocusedIndicatorColor = Color(0xFFBDBDBD)
         )
