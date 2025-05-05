@@ -2,9 +2,11 @@ package com.example.inktextil.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,9 +19,19 @@ import androidx.navigation.NavHostController
 import com.example.inktextil.R
 import com.example.inktextil.ui.components.NavBar
 import com.example.inktextil.ui.components.TopBar
-
 @Composable
-fun PagoConfirm(navController: NavHostController) {
+fun PagoConfirmScreen(
+    navController: NavHostController,
+    carritoViewModel: CarritoViewModel
+) {
+    // Snapshot de los datos del carrito antes de vaciarlo
+    val carritoSnapshot = remember { carritoViewModel.carrito.toList() }
+    val totalSnapshot = remember {
+        carritoSnapshot.sumOf {
+            it.price.replace("$", "").replace("MXN", "").trim().toDoubleOrNull() ?: 0.0
+        }
+    }
+
     Scaffold(
         topBar = { TopBar(navController) },
         bottomBar = { NavBar(navController) }
@@ -28,13 +40,14 @@ fun PagoConfirm(navController: NavHostController) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
+                .verticalScroll(rememberScrollState())
                 .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Imagen de confirmación
+            Spacer(modifier = Modifier.height(32.dp))
+
             Image(
-                painter = painterResource(id = R.drawable.img_3), // Asegúrate de tener esta imagen
+                painter = painterResource(id = R.drawable.img_3),
                 contentDescription = "Pago Confirmado",
                 modifier = Modifier.size(150.dp),
                 contentScale = ContentScale.Fit
@@ -69,26 +82,56 @@ fun PagoConfirm(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Detalles del pedido (ejemplo)
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text("Producto: Playera Premium", fontWeight = FontWeight.SemiBold)
-                Text("Talla: M")
-                Text("Color: Negro")
-                Text("Total: $350.00 MXN", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                Text("Detalles del pedido", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+
+                carritoSnapshot.forEach { item ->
+                    Column {
+                        Text("Producto: ${item.title}", fontWeight = FontWeight.SemiBold)
+                        Text("Talla: ${item.size}")
+                        Text("Color: ${item.color}")
+                        Text("Precio: ${item.price}")
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                }
+
+                Text(
+                    text = "Total: \$${"%.2f".format(totalSnapshot)} MXN",
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 16.sp
+                )
             }
 
             Spacer(modifier = Modifier.height(32.dp))
 
+            // Botón para limpiar el carrito manualmente
             Button(
                 onClick = {
-                    // Redirigir al home u otra pantalla
+                    carritoViewModel.limpiarCarrito()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Red
+                ),
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier
+                    .fillMaxWidth(0.6f)
+                    .height(48.dp)
+            ) {
+                Text("Limpiar carrito", fontSize = 16.sp, color = Color.White)
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = {
                     navController.navigate("articles") {
-                        popUpTo("checkout") { inclusive = true } // Opcional, limpia el stack
+                        popUpTo("checkout") { inclusive = true }
                     }
                 },
                 colors = ButtonDefaults.buttonColors(
@@ -101,6 +144,8 @@ fun PagoConfirm(navController: NavHostController) {
             ) {
                 Text("Seguir comprando", fontSize = 16.sp)
             }
+
+            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }

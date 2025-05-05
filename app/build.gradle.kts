@@ -66,6 +66,8 @@ dependencies {
 
     // Google Sign-In (requerido para login con Google)
     implementation("com.google.android.gms:play-services-auth:20.7.0")
+    implementation(libs.firebase.firestore.ktx)
+
 
     // Testing
     testImplementation(libs.junit)

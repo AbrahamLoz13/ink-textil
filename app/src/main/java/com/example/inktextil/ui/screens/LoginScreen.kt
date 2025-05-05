@@ -22,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.Dp
@@ -33,21 +34,19 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.OAuthProvider
 
 @Composable
 fun LoginScreen(navController: NavHostController) {
     val context = LocalContext.current
     val auth = FirebaseAuth.getInstance()
 
-    // Configuración de Google Sign-In
     val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
         .requestIdToken(context.getString(R.string.default_web_client_id))
         .requestEmail()
         .build()
-
     val googleSignInClient = GoogleSignIn.getClient(context, gso)
 
-    // Launcher para el resultado de Google Sign-In
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
@@ -57,7 +56,6 @@ fun LoginScreen(navController: NavHostController) {
                 auth.signInWithCredential(credential)
                     .addOnCompleteListener { authResult ->
                         if (authResult.isSuccessful) {
-                            // Se ha registrado o iniciado sesión correctamente
                             Toast.makeText(context, "Inicio de sesión con Google exitoso", Toast.LENGTH_SHORT).show()
                             navController.navigate("articles") {
                                 popUpTo("login") { inclusive = true }
@@ -68,7 +66,6 @@ fun LoginScreen(navController: NavHostController) {
                     }
             }
         } else {
-            // Maneja el caso en el que la actividad no se ejecuta correctamente
             Toast.makeText(context, "Error al iniciar sesión con Google.", Toast.LENGTH_SHORT).show()
         }
     }
@@ -83,9 +80,8 @@ fun LoginScreen(navController: NavHostController) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text("Iniciar Sesión", fontSize = 24.sp)
+        Text("Iniciar Sesión", fontSize = 24.sp, fontWeight = FontWeight.Bold)
 
-        // Campo de correo electrónico
         OutlinedTextField(
             value = username,
             onValueChange = { username = it },
@@ -96,7 +92,6 @@ fun LoginScreen(navController: NavHostController) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Campo de contraseña
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
@@ -109,14 +104,12 @@ fun LoginScreen(navController: NavHostController) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Botón para ir a la pantalla de recuperación de contraseña
         TextButton(onClick = { navController.navigate("forgot") }) {
             Text("¿Olvidaste tu contraseña?")
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Botón de inicio de sesión con correo y contraseña
         Button(
             onClick = {
                 if (username.isNotBlank() && password.isNotBlank()) {
@@ -141,18 +134,16 @@ fun LoginScreen(navController: NavHostController) {
         }
 
         Spacer(modifier = Modifier.height(20.dp))
-
         Text("Registrarse vía...")
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Botón para iniciar sesión con Google
+        // Inicio de sesión con Google
         SocialButton(
             iconRes = R.drawable.img_1,
             text = "Google",
             bgColor = Color(0xFF4285F4),
             onClick = {
-                // Lanzamos el intent de Google Sign-In
                 val signInIntent = googleSignInClient.signInIntent
                 launcher.launch(signInIntent)
             }
@@ -160,14 +151,36 @@ fun LoginScreen(navController: NavHostController) {
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Otros botones sociales (por ejemplo, X y Gmail)
-        SocialButton(iconRes = R.drawable.img_2, text = "X", bgColor = Color(0xFF1C1C1C))
-        Spacer(modifier = Modifier.height(12.dp))
-        SocialButton(iconRes = R.drawable.img, text = "Gmail", bgColor = Color(0xFFD93025))
+        // Inicio de sesión con Twitter
+        SocialButton(
+            iconRes = R.drawable.img_2,
+            text = "X",
+            bgColor = Color(0xFF1C1C1C),
+            onClick = {
+                val provider = OAuthProvider.newBuilder("twitter.com")
+                val pendingResultTask = auth.pendingAuthResult
+                if (pendingResultTask != null) {
+                    pendingResultTask
+                        .addOnSuccessListener {
+                            navController.navigate("articles")
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(context, "Error en el inicio de sesión. Inténtalo de nuevo.", Toast.LENGTH_SHORT).show()
+                        }
+                } else {
+                    auth.startActivityForSignInWithProvider(context as Activity, provider.build())
+                        .addOnSuccessListener {
+                            navController.navigate("articles")
+                        }
+                        .addOnFailureListener { exception ->
+                            Toast.makeText(context, "Error en el inicio de sesión: ${exception.localizedMessage}", Toast.LENGTH_SHORT).show()
+                        }
+                }
+            }
+        )
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Botón para ir a la pantalla de registro
         TextButton(onClick = { navController.navigate("RegisterScreen") }) {
             Text("¿No tienes cuenta? Regístrate")
         }

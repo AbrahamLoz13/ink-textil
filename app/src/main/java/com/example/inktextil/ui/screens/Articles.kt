@@ -1,3 +1,5 @@
+package com.example.inktextil.ui.screens
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,7 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.inktextil.R
 import com.example.inktextil.ui.components.NavBar
@@ -23,7 +25,7 @@ import com.example.inktextil.ui.components.TopBar
 data class Article(val title: String, val image: Int, val description: String, val route: String)
 
 @Composable
-fun ArticlesScreen(navController: NavController) {
+fun ArticlesScreen(navController: NavHostController) {
     val articles = listOf(
         Article("Camisetas", R.drawable.logopa, "Explora nuestra colección de camisetas de alta calidad.", "detallesArticulo"),
         Article("Sudaderas", R.drawable.sudaderaong, "Descubre sudaderas cómodas y con diseños únicos.", "sudaderasScreen"),
