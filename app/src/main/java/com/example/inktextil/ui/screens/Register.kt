@@ -1,5 +1,6 @@
 package com.example.inktextil.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -10,31 +11,33 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 @OptIn(ExperimentalMaterial3Api::class)
-
 @Composable
 fun RegisterScreen(navController: NavHostController) {
     var username by remember { mutableStateOf(TextFieldValue()) }
     var email by remember { mutableStateOf(TextFieldValue()) }
     var password by remember { mutableStateOf(TextFieldValue()) }
-    var showSuccessDialog by remember { mutableStateOf(false) } // Estado para controlar el diálogo
+    var showSuccessDialog by remember { mutableStateOf(false) }
 
-    // Diálogo de registro exitoso
+    val context = LocalContext.current
+
     if (showSuccessDialog) {
         AlertDialog(
             onDismissRequest = {
                 showSuccessDialog = false
-                navController.navigate("LoginScreen") // Redirige a LoginScreen
+                navController.navigate("login")
             },
             title = { Text("Registro exitoso") },
             text = { Text("Tu cuenta ha sido creada correctamente.") },
@@ -42,7 +45,7 @@ fun RegisterScreen(navController: NavHostController) {
                 Button(
                     onClick = {
                         showSuccessDialog = false
-                        navController.navigate("login") // Redirige a LoginScreen
+                        navController.navigate("login")
                     }
                 ) {
                     Text("Aceptar")
@@ -55,7 +58,7 @@ fun RegisterScreen(navController: NavHostController) {
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .background(MaterialTheme.colorScheme.background), // Fondo temático
+            .background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -64,7 +67,7 @@ fun RegisterScreen(navController: NavHostController) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Volver",
-                    tint = MaterialTheme.colorScheme.onBackground // Color del ícono
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
         }
@@ -74,8 +77,9 @@ fun RegisterScreen(navController: NavHostController) {
         Text(
             text = "Registro",
             style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground // Color del texto
+            color = MaterialTheme.colorScheme.onBackground
         )
+
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
@@ -88,6 +92,7 @@ fun RegisterScreen(navController: NavHostController) {
                 unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
             )
         )
+
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
@@ -101,6 +106,7 @@ fun RegisterScreen(navController: NavHostController) {
                 unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
             )
         )
+
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
@@ -115,12 +121,34 @@ fun RegisterScreen(navController: NavHostController) {
                 unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
             )
         )
+
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
             onClick = {
-                // Lógica de registro (simulada)
-                showSuccessDialog = true // Muestra el diálogo de éxito
+                val emailText = email.text.trim()
+                val passwordText = password.text
+
+                if (emailText.isNotEmpty() && passwordText.isNotEmpty()) {
+                    Firebase.auth.createUserWithEmailAndPassword(emailText, passwordText)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                showSuccessDialog = true
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "Error: ${task.exception?.message}",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        }
+                } else {
+                    Toast.makeText(
+                        context,
+                        "Por favor llena todos los campos",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
@@ -137,7 +165,7 @@ fun RegisterScreen(navController: NavHostController) {
             text = "Al registrarte, aceptas nuestros Términos de Servicio y Política de Privacidad.",
             style = MaterialTheme.typography.bodySmall,
             fontSize = 12.sp,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f) // Color del texto
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
         )
     }
 }

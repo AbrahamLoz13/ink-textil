@@ -12,7 +12,20 @@
           "package_name": "com.example.inktextil"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "675854312954-pc4k5532a8m5ar5bvcvc1arklbdod7ij.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.inktextil",
+            "certificate_hash": "283bd25629fd1afecdab0642050b2d33ac3ac4ec"
+          }
+        },
+        {
+          "client_id": "675854312954-9ncqqt6e7i66o1gvuu7d2ovgndomn9oo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDFU3ZXwKlzJ1iR49wFLBsyyWm649UHMiA"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "675854312954-9ncqqt6e7i66o1gvuu7d2ovgndomn9oo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

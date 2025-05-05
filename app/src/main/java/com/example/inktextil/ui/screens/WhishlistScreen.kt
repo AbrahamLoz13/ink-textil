@@ -1,13 +1,13 @@
 package com.example.inktextil.ui.screens
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,19 +17,40 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.inktextil.R
 import com.example.inktextil.ui.components.NavBar
 import com.example.inktextil.ui.components.TopBar
 
-@Composable
-fun WishListScreen(navController: NavController) {
-    Column(modifier = Modifier.fillMaxSize()) {
-        // TopBar
-        TopBar(navController = navController)
+data class WishItem(val title: String, val imageRes: Int)
 
-        // Contenido principal
+@Composable
+fun WishListScreen(navController: NavHostController) {
+    var searchQuery by remember { mutableStateOf("") }
+
+    // Lista completa de productos
+    val allProducts = listOf(
+        WishItem("Playera Pulp Fiction", R.drawable.playera1),
+        WishItem("Sudadera Breaking Bad", R.drawable.sudaderaong),
+        WishItem("Pantalón Stranger Things", R.drawable.logopan),
+        WishItem("Gorra Rick and Morty", R.drawable.gorralog),
+        WishItem("Chaqueta Naruto", R.drawable.logocha)
+    )
+
+    // Lista filtrada según la búsqueda
+    val filteredProducts = allProducts.filter {
+        it.title.contains(searchQuery, ignoreCase = true)
+    }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+
+        // TopBar con búsqueda real
+        TopBar(
+            navController = navController,
+            onSearch = { searchQuery = it }
+        )
+
         Column(modifier = Modifier.weight(1f)) {
             Row(
                 modifier = Modifier
@@ -44,36 +65,26 @@ fun WishListScreen(navController: NavController) {
                     fontSize = 27.sp,
                     modifier = Modifier.weight(1f)
                 )
-                TextField(
-                    value = "",
-                    onValueChange = {},
-                    placeholder = { Text("Buscar") },
-                    modifier = Modifier.width(200.dp)
-                )
             }
-
-
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Lista de productos
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 modifier = Modifier.padding(horizontal = 16.dp)
             ) {
-                items(10) { index ->
-                    ProductItem(navController)
+                items(filteredProducts) { product ->
+                    ProductItem(navController = navController, title = product.title, imageRes = product.imageRes)
                 }
             }
         }
 
-        // NavBar
         NavBar(navController = navController)
     }
 }
 
 @Composable
-fun ProductItem(navController: NavController) {
+fun ProductItem(navController: NavHostController, title: String, imageRes: Int) {
     Card(
         modifier = Modifier
             .padding(8.dp)
@@ -86,15 +97,15 @@ fun ProductItem(navController: NavController) {
             modifier = Modifier.padding(8.dp)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.playera1),
-                contentDescription = "Imagen del producto",
+                painter = painterResource(id = imageRes),
+                contentDescription = title,
                 modifier = Modifier
                     .size(120.dp)
-                    .clickable { navController.navigate("detallesArticulo") } // Navega al hacer clic en la imagen
+                    .clickable { navController.navigate("detallesArticulo") }
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Playera Pulp Fiction",
+                text = title,
                 color = Color.Black,
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp
@@ -109,13 +120,10 @@ fun ProductItem(navController: NavController) {
         }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 fun PreviewWishListScreen() {
-    // Usamos un NavController simulado, ya que no podemos crear uno real en el preview
     val navController = rememberNavController()
-
-    // Llamamos a la función WishListScreen con el NavController
     WishListScreen(navController = navController)
 }
-
