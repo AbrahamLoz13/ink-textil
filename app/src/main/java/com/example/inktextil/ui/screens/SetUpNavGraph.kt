@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.inktextil.ui.model.CarritoViewModel
 
 @Composable
 fun SetUpNavGraph(
@@ -25,7 +26,7 @@ fun SetUpNavGraph(
         composable("datos") { DatosScreen(navController) }
         composable("detallesArticulo") { CatalogoPlayeras(navController, carritoViewModel) }
         composable("pedidos") { PedidosScreen(navController) }
-        composable("wishlist") { WishListScreen(navController) }
+        composable("wishlist") { WishListScreen(navController, carritoViewModel) }
         composable("detallepedidos") { DetallesPedidoScreen(navController) }
 
         // ✅ Corregido: se pasa el carritoViewModel

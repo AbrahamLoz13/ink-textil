@@ -16,6 +16,7 @@ import com.example.inktextil.R
 import com.example.inktextil.ui.components.NavBar
 import com.example.inktextil.ui.components.ShirtCard
 import com.example.inktextil.ui.components.TopBar
+import com.example.inktextil.ui.model.CarritoViewModel
 
 data class ShirtItem(
     val title: String,
