@@ -62,12 +62,15 @@ dependencies {
 
     // Firebase productos específicos
     implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.firebase:firebase-auth-ktx") // Autenticación
-
-    // Google Sign-In (requerido para login con Google)
-    implementation("com.google.android.gms:play-services-auth:20.7.0")
+    implementation("com.google.firebase:firebase-auth-ktx")
     implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.storage.ktx)
 
+    // Google Sign-In
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
+    
+    // Exif (opcional si manejas imágenes desde almacenamiento)
+    implementation("androidx.exifinterface:exifinterface:1.4.1")
 
     // Testing
     testImplementation(libs.junit)
