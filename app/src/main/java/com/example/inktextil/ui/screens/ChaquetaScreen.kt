@@ -16,6 +16,7 @@ import com.example.inktextil.R
 import com.example.inktextil.ui.components.JacketCard
 import com.example.inktextil.ui.components.NavBar
 import com.example.inktextil.ui.components.TopBar
+import com.example.inktextil.ui.model.CarritoViewModel
 
 val jacketCatalog = listOf(
     ShirtItem("Chaqueta Invierno", "Chaqueta térmica para el frío.", R.drawable.logocha, "M, L, XL", "Negro", "$750 MXN"),
@@ -24,7 +25,6 @@ val jacketCatalog = listOf(
     ShirtItem("Chaqueta Jeans", "Diseño casual de mezclilla.", R.drawable.logocha, "M, L, XL", "Azul", "$790 MXN"),
     ShirtItem("Chaqueta Lluvia", "Impermeable con capucha.", R.drawable.logocha, "S, M, L", "Verde", "$700 MXN")
 )
-
 @Composable
 fun CatalogoChaquetas(
     navController: NavHostController,
@@ -55,6 +55,7 @@ fun CatalogoChaquetas(
             Spacer(modifier = Modifier.height(12.dp))
 
             jacketCatalog.forEach { jacket ->
+                // Reemplazar JacketCard por la versión que tiene soporte para wishlist
                 JacketCard(
                     jacket = jacket,
                     carritoViewModel = carritoViewModel,

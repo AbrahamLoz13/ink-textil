@@ -16,6 +16,7 @@ import com.example.inktextil.R
 import com.example.inktextil.ui.components.CapCard
 import com.example.inktextil.ui.components.NavBar
 import com.example.inktextil.ui.components.TopBar
+import com.example.inktextil.ui.model.CarritoViewModel
 
 // Modelo de gorra
 data class CapItem(

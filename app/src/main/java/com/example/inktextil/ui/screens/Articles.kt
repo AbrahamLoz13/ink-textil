@@ -21,6 +21,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.inktextil.R
 import com.example.inktextil.ui.components.NavBar
 import com.example.inktextil.ui.components.TopBar
+import com.google.android.gms.common.util.CollectionUtils.listOf
 
 data class Article(val title: String, val image: Int, val description: String, val route: String)
 

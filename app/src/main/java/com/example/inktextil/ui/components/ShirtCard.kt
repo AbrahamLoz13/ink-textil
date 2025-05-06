@@ -12,7 +12,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.inktextil.ui.screens.CarritoViewModel
+import com.example.inktextil.ui.model.CarritoViewModel
 import com.example.inktextil.ui.screens.ShirtItem
 import kotlinx.coroutines.launch
 

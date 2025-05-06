@@ -11,7 +11,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
-import com.example.inktextil.ui.screens.CarritoViewModel
+import com.example.inktextil.ui.model.CarritoViewModel
 import com.example.inktextil.ui.screens.SetUpNavGraph
 import com.example.inktextil.ui.theme.InkTextilTheme
 

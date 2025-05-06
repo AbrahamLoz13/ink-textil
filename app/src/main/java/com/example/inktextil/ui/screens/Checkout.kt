@@ -28,6 +28,7 @@ import com.example.inktextil.ui.components.TopBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.navigation.compose.rememberNavController
+import com.example.inktextil.ui.model.CarritoViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
