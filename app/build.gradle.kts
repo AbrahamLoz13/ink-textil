@@ -2,7 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.googleService) // Plugin para Google Services (google-services.json)
+    alias(libs.plugins.googleService)
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.23"// Plugin para Google Services (google-services.json)
 }
 
 android {
@@ -11,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.inktextil"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -57,7 +58,7 @@ dependencies {
     implementation(libs.androidx.navigation.runtime.android)
     implementation(libs.coil.compose)
 
-    // Firebase BoM (maneja versiones automáticamente)
+    // Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
 
     // Firebase productos específicos
@@ -68,8 +69,14 @@ dependencies {
 
     // Google Sign-In
     implementation("com.google.android.gms:play-services-auth:20.7.0")
-    
-    // Exif (opcional si manejas imágenes desde almacenamiento)
+
+    // Retrofit + OkHttp + Kotlinx Serialization
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+
+    // Exif (opcional para imágenes desde almacenamiento)
     implementation("androidx.exifinterface:exifinterface:1.4.1")
 
     // Testing

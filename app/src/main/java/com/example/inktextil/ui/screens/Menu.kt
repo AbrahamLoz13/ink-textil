@@ -58,7 +58,6 @@ fun Menu(navController: NavHostController) {
 
                 val options = listOf(
                     Triple("Datos", Icons.Default.Person, "datos"),
-                    Triple("Pedidos", Icons.Default.ShoppingCart, "pedidos"),
                     Triple("Pagos", Icons.Default.Star, "pagos"),
                     Triple("Mis diseños", Icons.Default.AddCircle, "misdiseños"),
                     Triple("Wish list", Icons.Default.FavoriteBorder, "wishlist"),
