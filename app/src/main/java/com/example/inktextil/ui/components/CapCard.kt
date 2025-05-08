@@ -3,11 +3,15 @@ package com.example.inktextil.ui.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -24,6 +28,17 @@ fun CapCard(
     snackbarHostState: SnackbarHostState
 ) {
     val coroutineScope = rememberCoroutineScope()
+
+    val shirtItem = ShirtItem(
+        title = cap.title,
+        description = cap.description,
+        imageRes = cap.imageRes,
+        size = cap.size,
+        color = cap.color,
+        price = cap.price
+    )
+
+    val isWishlisted = carritoViewModel.wishlist.contains(shirtItem)
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -49,16 +64,7 @@ fun CapCard(
 
             Button(
                 onClick = {
-                    carritoViewModel.agregarAlCarrito(
-                        ShirtItem(
-                            title = cap.title,
-                            description = cap.description,
-                            imageRes = cap.imageRes,
-                            size = cap.size,
-                            color = cap.color,
-                            price = cap.price
-                        )
-                    )
+                    carritoViewModel.agregarAlCarrito(shirtItem)
                     coroutineScope.launch {
                         snackbarHostState.showSnackbar("Agregado al carrito: ${cap.title}")
                     }
@@ -66,6 +72,25 @@ fun CapCard(
                 modifier = Modifier.align(Alignment.End)
             ) {
                 Text("Agregar al carrito")
+            }
+
+            IconButton(
+                onClick = {
+                    carritoViewModel.toggleWishlist(shirtItem)
+                    coroutineScope.launch {
+                        snackbarHostState.showSnackbar(
+                            if (isWishlisted) "Eliminado de la wishlist: ${cap.title}"
+                            else "Agregado a la wishlist: ${cap.title}"
+                        )
+                    }
+                },
+                modifier = Modifier.align(Alignment.End)
+            ) {
+                Icon(
+                    imageVector = if (isWishlisted) Icons.Filled.Star else Icons.Outlined.Star,
+                    contentDescription = "Wishlist",
+                    tint = if (isWishlisted) Color.Yellow else Color.Gray
+                )
             }
         }
     }

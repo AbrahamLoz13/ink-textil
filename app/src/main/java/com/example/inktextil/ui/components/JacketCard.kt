@@ -3,11 +3,15 @@ package com.example.inktextil.ui.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -18,11 +22,12 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun JacketCard(
-    jacket: ShirtItem, // Si estás usando el mismo modelo para chaquetas
+    jacket: ShirtItem,
     carritoViewModel: CarritoViewModel,
     snackbarHostState: SnackbarHostState
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val isWishlisted = carritoViewModel.wishlist.contains(jacket)
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -56,6 +61,26 @@ fun JacketCard(
                 modifier = Modifier.align(Alignment.End)
             ) {
                 Text("Agregar al carrito")
+            }
+
+            // Botón de wishlist (estrella)
+            IconButton(
+                onClick = {
+                    carritoViewModel.toggleWishlist(jacket)
+                    coroutineScope.launch {
+                        snackbarHostState.showSnackbar(
+                            if (isWishlisted) "Eliminado de la wishlist: ${jacket.title}"
+                            else "Agregado a la wishlist: ${jacket.title}"
+                        )
+                    }
+                },
+                modifier = Modifier.align(Alignment.End)
+            ) {
+                Icon(
+                    imageVector = if (isWishlisted) Icons.Filled.Star else Icons.Outlined.Star,
+                    contentDescription = "Wishlist",
+                    tint = if (isWishlisted) Color.Yellow else Color.Gray
+                )
             }
         }
     }

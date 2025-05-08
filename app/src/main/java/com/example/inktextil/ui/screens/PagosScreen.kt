@@ -4,32 +4,42 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.inktextil.model.PaymentMethod
+import com.example.inktextil.model.PaymentViewModel
 import com.example.inktextil.ui.components.NavBar
 import com.example.inktextil.ui.components.TopBar
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.safeContentPadding
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PagosScreen(navController: NavHostController) {
-    var selectedCard by remember { mutableStateOf<String?>(null) }
+fun PagosScreen(
+    navController: NavHostController,
+    paymentViewModel: PaymentViewModel = viewModel()
+) {
     var nameOnCard by remember { mutableStateOf("") }
+    var cardNumber by remember { mutableStateOf("") }
     var expiryMonth by remember { mutableStateOf("01") }
     var expiryYear by remember { mutableStateOf("2025") }
+    var cvv by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }
+
+    val methods by paymentViewModel.paymentMethods.collectAsState()
 
     Scaffold(
         topBar = { TopBar(navController) },
@@ -42,38 +52,50 @@ fun PagosScreen(navController: NavHostController) {
             ) {
                 NavBar(navController)
             }
-        },
-        contentWindowInsets = WindowInsets(0, 0, 0, 0) // evitamos dobles paddings
+        }
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color(0xFFF5F5F5))
                 .padding(paddingValues)
-                .padding(16.dp)
-                .imePadding(), // se adapta al teclado
+                .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             item {
-                Text("TARJETAS Y CUENTAS", fontSize = 20.sp)
+                Text("Tus métodos de pago", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.Black)
             }
 
-            items(3) { index ->
-                Box(
+            items(methods) { method ->
+                Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(80.dp)
-                        .background(
-                            if (selectedCard == "Card $index") Color(0xFFD1C4E9)
-                            else Color.White,
-                            shape = RoundedCornerShape(12.dp)
-                        )
-                        .clickable { selectedCard = "Card $index" }
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
+                        .clickable { /* seleccionar */ },
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White)
                 ) {
-                    Text("Tarjeta **** **** **** ${1000 + index}")
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text("•••• ${method.lastFourDigits}", fontSize = 18.sp, color = Color.Black)
+                        Text("Nombre: ${method.nameOnCard}", color = Color.Black)
+                        Text("Expira: ${method.expiryMonth}/${method.expiryYear}", color = Color.Black)
+                        Text("Dirección: ${method.address}", color = Color.Black)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            "Eliminar",
+                            color = Color.Red,
+                            modifier = Modifier.clickable {
+                                paymentViewModel.deletePaymentMethod(method.lastFourDigits)
+                            }
+                        )
+                    }
                 }
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+                Divider()
+                Spacer(modifier = Modifier.height(16.dp))
+                Text("Agregar nuevo método", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.Black)
             }
 
             item {
@@ -81,21 +103,28 @@ fun PagosScreen(navController: NavHostController) {
                     value = nameOnCard,
                     onValueChange = { nameOnCard = it },
                     label = { Text("Nombre en la tarjeta") },
+                    modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color.White,
-                        focusedIndicatorColor = Color(0xFF6200EE),
-                        unfocusedIndicatorColor = Color(0xFFBDBDBD)
-                    ),
-                    modifier = Modifier.fillMaxWidth()
+                    colors = TextFieldDefaults.textFieldColors(containerColor = Color.White),
+                    textStyle = TextStyle(color = Color.Black)
                 )
             }
 
             item {
-                Row(
+                TextField(
+                    value = cardNumber,
+                    onValueChange = { cardNumber = it },
+                    label = { Text("Número de tarjeta") },
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
+                    shape = RoundedCornerShape(12.dp),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    colors = TextFieldDefaults.textFieldColors(containerColor = Color.White),
+                    textStyle = TextStyle(color = Color.Black)
+                )
+            }
+
+            item {
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     CustomDropdownField(
                         label = "Mes",
                         options = (1..12).map { it.toString().padStart(2, '0') },
@@ -115,43 +144,57 @@ fun PagosScreen(navController: NavHostController) {
 
             item {
                 TextField(
-                    value = address,
-                    onValueChange = { address = it },
-                    label = { Text("Dirección de tarjeta") },
+                    value = cvv,
+                    onValueChange = { cvv = it },
+                    label = { Text("CVV") },
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     shape = RoundedCornerShape(12.dp),
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color.White,
-                        focusedIndicatorColor = Color(0xFF6200EE),
-                        unfocusedIndicatorColor = Color(0xFFBDBDBD)
-                    ),
-                    modifier = Modifier.fillMaxWidth()
+                    colors = TextFieldDefaults.textFieldColors(containerColor = Color.White),
+                    textStyle = TextStyle(color = Color.Black)
                 )
             }
 
             item {
-                Row(
+                TextField(
+                    value = address,
+                    onValueChange = { address = it },
+                    label = { Text("Dirección") },
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    Button(
-                        onClick = { /* Guardar lógica */ },
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Text("Guardar")
-                    }
-                    Button(
-                        onClick = { /* Eliminar lógica */ },
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
-                    ) {
-                        Text("Eliminar")
-                    }
-                }
+                    shape = RoundedCornerShape(12.dp),
+                    colors = TextFieldDefaults.textFieldColors(containerColor = Color.White),
+                    textStyle = TextStyle(color = Color.Black)
+                )
             }
 
             item {
-                Spacer(modifier = Modifier.height(24.dp))
+                Button(
+                    onClick = {
+                        val randomDigits = (1000..9999).random().toString()
+                        val newMethod = PaymentMethod(
+                            nameOnCard = nameOnCard,
+                            expiryMonth = expiryMonth,
+                            expiryYear = expiryYear,
+                            address = address,
+                            lastFourDigits = randomDigits
+                        )
+                        paymentViewModel.addPaymentMethod(newMethod)
+                        // Clear fields after adding method
+                        nameOnCard = ""
+                        cardNumber = ""
+                        expiryMonth = "01"
+                        expiryYear = "2025"
+                        cvv = ""
+                        address = ""
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text("Guardar método de pago")
+                }
             }
+
+            item { Spacer(modifier = Modifier.height(32.dp)) }
         }
     }
 }
@@ -167,37 +210,34 @@ fun CustomDropdownField(
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = !expanded },
-        modifier = modifier
-    ) {
-        TextField(
+    Box(modifier = modifier) {
+        OutlinedTextField(
             value = selectedOption,
             onValueChange = {},
             readOnly = true,
             label = { Text(label) },
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color.White,
-                focusedIndicatorColor = Color(0xFF6200EE),
-                unfocusedIndicatorColor = Color(0xFFBDBDBD)
-            ),
-            shape = RoundedCornerShape(12.dp),
             modifier = Modifier
-                .menuAnchor()
                 .fillMaxWidth()
+                .clickable { expanded = true },
+            trailingIcon = {
+                Icon(
+                    imageVector = if (expanded) Icons.Filled.ArrowDropDown else Icons.Filled.ArrowDropDown,
+                    contentDescription = null
+                )
+            },
+            shape = RoundedCornerShape(12.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(containerColor = Color.White)
         )
 
-        ExposedDropdownMenu(
+        DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            options.forEach { selectionOption ->
+            options.forEach { option ->
                 DropdownMenuItem(
-                    text = { Text(selectionOption) },
+                    text = { Text(option) },
                     onClick = {
-                        onOptionSelected(selectionOption)
+                        onOptionSelected(option)
                         expanded = false
                     }
                 )
@@ -206,8 +246,3 @@ fun CustomDropdownField(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewPagosScreen() {
-    PagosScreen(navController = NavHostController(LocalContext.current))
-}
