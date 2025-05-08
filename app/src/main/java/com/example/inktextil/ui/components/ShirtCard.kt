@@ -3,11 +3,15 @@ package com.example.inktextil.ui.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -23,6 +27,7 @@ fun ShirtCard(
     snackbarHostState: SnackbarHostState
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val isWishlisted = carritoViewModel.wishlist.contains(shirt)
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -30,7 +35,6 @@ fun ShirtCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            // Imagen local
             Image(
                 painter = painterResource(id = shirt.imageRes),
                 contentDescription = shirt.title,
@@ -57,6 +61,25 @@ fun ShirtCard(
                 modifier = Modifier.align(Alignment.End)
             ) {
                 Text("Agregar al carrito")
+            }
+
+            IconButton(
+                onClick = {
+                    carritoViewModel.toggleWishlist(shirt)
+                    coroutineScope.launch {
+                        snackbarHostState.showSnackbar(
+                            if (isWishlisted) "Eliminado de la wishlist: ${shirt.title}"
+                            else "Agregado a la wishlist: ${shirt.title}"
+                        )
+                    }
+                },
+                modifier = Modifier.align(Alignment.End)
+            ) {
+                Icon(
+                    imageVector = if (isWishlisted) Icons.Filled.Star else Icons.Outlined.Star,
+                    contentDescription = "Wishlist",
+                    tint = if (isWishlisted) Color.Yellow else Color.Gray
+                )
             }
         }
     }
