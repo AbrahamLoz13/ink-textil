@@ -33,7 +33,7 @@ fun SetUpNavGraph(
         composable("carrito") { CarritoScreen(navController, carritoViewModel) }
 
         composable("historial") { HistorialScreen(navController) }
-        composable("misdiseños") { DisenoScreen(navController) }
+        composable("misdiseños") { DisenoScreen(navController = navController)}
         composable("forgot") { ForgotPasswordScreen(navController) }
         composable("pagos") { PagosScreen(navController) }
         composable("sudaderasScreen") { CatalogoSudaderas(navController, carritoViewModel) }
