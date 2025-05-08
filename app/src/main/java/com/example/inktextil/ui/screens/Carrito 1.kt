@@ -1,66 +1,77 @@
 package com.example.inktextil.ui.screens
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.inktextil.ui.components.NavBar
 import com.example.inktextil.ui.components.TopBar
+import com.example.inktextil.ui.model.CarritoViewModel
 
 @Composable
-fun CarritoScreen(navController: NavHostController) {
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        TopBar(navController) // ✅ Agregado el TopBar
+fun CarritoScreen(navController: NavHostController, carritoViewModel: CarritoViewModel) {
+    val cartItems = carritoViewModel.carrito
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 10.dp)
-        ) {
-            // 🔍 Barra de búsqueda y filtro
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        TopBar(navController)
+
+        Column(modifier = Modifier.padding(12.dp)) {
+            Text(
+                text = "${cartItems.size} artículos",
+                fontSize = 14.sp
+            )
+
+            val totalPrice = cartItems.sumOf {
+                it.price.replace("$", "").replace("MXN", "").trim().toDoubleOrNull() ?: 0.0
+            }
+
+            Text(
+                text = "Total: \$${"%.2f".format(totalPrice)}",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold
+            )
+
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.weight(1f)
             ) {
-                TextField(
-                    value = "",
-                    onValueChange = {},
-                    placeholder = { Text("Buscar pedido") },
-                    modifier = Modifier.weight(1f)
-                )
-                Button(
-                    onClick = {},
-                    shape = RoundedCornerShape(4.dp)
-                ) {
-                    Text("Filtrar")
+                items(cartItems) { item ->
+                    CartItemCard(
+                        item = item,
+                        onRemove = { carritoViewModel.eliminarDelCarrito(item) }
+                    )
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // 📜 Lista de artículos en el carrito
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.weight(1f)
+            Button(
+                onClick = {
+                    if (cartItems.isNotEmpty()) {
+                        navController.navigate("checkout")
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                enabled = cartItems.isNotEmpty()
             ) {
-                items((1..4).toList()) { _ ->
-                    CarritoItem()
-                }
-            } // ✅ Agregado el NavBar en la parte inferior
+                Text("Proceder al pago")
+            }
 
             NavBar(navController)
         }
@@ -68,43 +79,36 @@ fun CarritoScreen(navController: NavHostController) {
 }
 
 @Composable
-fun CarritoItem() {
+fun CartItemCard(
+    item: ShirtItem,
+    onRemove: () -> Unit
+) {
     Card(
+        modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        modifier = Modifier.fillMaxWidth()
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
+        Row(modifier = Modifier.padding(12.dp)) {
+            Image(
+                painter = painterResource(id = item.imageRes),
+                contentDescription = item.title,
+                modifier = Modifier.size(80.dp)
+            )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
             Column(modifier = Modifier.weight(1f)) {
-                Text("Artículo", fontSize = 16.sp, color = Color.Black)
-                Text("Precio: X.XX", fontSize = 14.sp, color = Color.Gray)
-            }
-            Spacer(modifier = Modifier.width(10.dp))
-            Box(
-                modifier = Modifier
-                    .size(80.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    painter = painterResource(android.R.drawable.ic_menu_gallery),
-                    contentDescription = "Imagen",
-                    tint = Color.Gray,
-                    modifier = Modifier.size(50.dp)
+                Text(item.title, fontWeight = FontWeight.Bold)
+                Text(item.description)
+                Text("Talla: ${item.size} | Color: ${item.color}")
+                Text(item.price, fontWeight = FontWeight.Bold)
+
+                Text(
+                    text = "Eliminar",
+                    color = Color.Red,
+                    modifier = Modifier.clickable { onRemove() }
                 )
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CarritoScreenPreview() {
-    CarritoScreen(navController = rememberNavController())
 }

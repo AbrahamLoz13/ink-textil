@@ -2,83 +2,126 @@ package com.example.inktextil.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import com.example.inktextil.model.UsuarioViewModel
 import com.example.inktextil.ui.components.NavBar
 import com.example.inktextil.ui.components.TopBar
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DatosScreen(navController: NavHostController) {
-    Column(modifier = Modifier.fillMaxSize()) {
-        // TopBar
-        TopBar(navController = navController)
+fun DatosScreen(navController: NavHostController, viewModel: UsuarioViewModel = viewModel()) {
+    val usuario = viewModel.usuarioData
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
-        // Contenido principal con fondo de color suave
+    // Cargar datos automáticamente al abrir la pantalla
+    LaunchedEffect(Unit) {
+        viewModel.cargarDatosUsuario()
+    }
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
-                .background(Color(0xFFF1F1F1)), // Fondo suave
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(paddingValues)
         ) {
-            // Input de Username y Botón Guardar con diseño atractivo
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxWidth()
+            TopBar(navController = navController)
+
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .background(Color(0xFFF5F5F5))
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .verticalScroll(rememberScrollState())
             ) {
-                TextField(
-                    value = "",
-                    onValueChange = {},
-                    placeholder = { Text("Username", color = Color.Gray) },
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(8.dp),
-                    shape = RoundedCornerShape(12.dp), // Bordes redondeados
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color.White,
-                        focusedIndicatorColor = Color(0xFF6200EE),
-                        unfocusedIndicatorColor = Color(0xFFBDBDBD)
-                    )
-                )
-                Button(
-                    onClick = {},
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .height(50.dp)
-                        .fillMaxHeight(),
-                    shape = RoundedCornerShape(12.dp), // Bordes redondeados
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF6200EE),
-                        contentColor = Color.White
-                    )
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                 ) {
-                    Text("Guardar", style = MaterialTheme.typography.bodyLarge)
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        // Campo Username y botón
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            TextField(
+                                value = usuario.username,
+                                onValueChange = { viewModel.actualizarCampo("username", it) },
+                                placeholder = { Text("Username", color = Color.Black) },
+                                modifier = Modifier.weight(1f),
+                                shape = RoundedCornerShape(12.dp),
+                                colors = TextFieldDefaults.colors(
+                                    focusedTextColor = Color.Black,
+                                    unfocusedTextColor = Color.Black,
+                                    focusedContainerColor = Color(0xFFFDFDFD),
+                                    unfocusedContainerColor = Color(0xFFFDFDFD),
+                                    focusedIndicatorColor = Color(0xFF6200EE),
+                                    unfocusedIndicatorColor = Color(0xFFBDBDBD)
+                                )
+                            )
+                            Button(
+                                onClick = {
+                                    viewModel.guardarDatosUsuario()
+                                    scope.launch {
+                                        snackbarHostState.showSnackbar("Datos guardados con éxito")
+                                    }
+                                },
+                                shape = RoundedCornerShape(12.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color(0xFF6200EE),
+                                    contentColor = Color.White
+                                )
+                            ) {
+                                Text("Guardar")
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        CustomTextField("Correo", usuario.correo) {
+                            viewModel.actualizarCampo("correo", it)
+                        }
+                        CustomTextField("Dirección 1", usuario.direccion1) {
+                            viewModel.actualizarCampo("direccion1", it)
+                        }
+                        CustomTextField("Dirección 2", usuario.direccion2) {
+                            viewModel.actualizarCampo("direccion2", it)
+                        }
+                        DropdownMenuField("Ciudad", listOf("Ciudad A", "Ciudad B", "Ciudad C"), usuario.ciudad) {
+                            viewModel.actualizarCampo("ciudad", it)
+                        }
+                        CustomTextField("C.p", usuario.cp) {
+                            viewModel.actualizarCampo("cp", it)
+                        }
+                        DropdownMenuField("Colonia", listOf("Colonia X", "Colonia Y", "Colonia Z"), usuario.colonia) {
+                            viewModel.actualizarCampo("colonia", it)
+                        }
+                        CustomTextField("Número", usuario.numero) {
+                            viewModel.actualizarCampo("numero", it)
+                        }
+                    }
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
             }
 
-            // Campos de texto con bordes suaves y foco atractivo
-            CustomTextField(label = "Correo")
-            CustomTextField(label = "Direccion 1")
-            CustomTextField(label = "Dirección 2")
-
-            // Dropdowns mejorados con diseño
-            DropdownMenuField(label = "Ciudad", items = listOf("Ciudad A", "Ciudad B", "Ciudad C"))
-            CustomTextField(label = "C.p")
-            DropdownMenuField(label = "Colonia", items = listOf("Colonia X", "Colonia Y", "Colonia Z"))
-            CustomTextField(label = "Número")
-
-            Spacer(modifier = Modifier.weight(1f))
-            // NavBar
             NavBar(navController = navController)
         }
     }
@@ -86,9 +129,35 @@ fun DatosScreen(navController: NavHostController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DropdownMenuField(label: String, items: List<String>) {
+fun CustomTextField(label: String, value: String, onChange: (String) -> Unit) {
+    TextField(
+        value = value,
+        onValueChange = onChange,
+        placeholder = { Text(label, color = Color.Black) },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        shape = RoundedCornerShape(12.dp),
+        colors = TextFieldDefaults.colors(
+            focusedTextColor = Color.Black,
+            unfocusedTextColor = Color.Black,
+            focusedContainerColor = Color(0xFFFDFDFD),
+            unfocusedContainerColor = Color(0xFFFDFDFD),
+            focusedIndicatorColor = Color(0xFF6200EE),
+            unfocusedIndicatorColor = Color(0xFFBDBDBD)
+        )
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DropdownMenuField(
+    label: String,
+    items: List<String>,
+    selected: String,
+    onItemSelected: (String) -> Unit
+) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedText by remember { mutableStateOf(items.first()) }
 
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -97,15 +166,17 @@ fun DropdownMenuField(label: String, items: List<String>) {
         TextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .menuAnchor()
-                .padding(8.dp),
+                .menuAnchor(),
             readOnly = true,
-            value = selectedText,
+            value = selected,
             onValueChange = {},
-            label = { Text(label, color = Color.Gray) },
+            label = { Text(label, color = Color.Black) },
             shape = RoundedCornerShape(12.dp),
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color.White,
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = Color.Black,
+                unfocusedTextColor = Color.Black,
+                focusedContainerColor = Color(0xFFFDFDFD),
+                unfocusedContainerColor = Color(0xFFFDFDFD),
                 focusedIndicatorColor = Color(0xFF6200EE),
                 unfocusedIndicatorColor = Color(0xFFBDBDBD)
             ),
@@ -117,41 +188,15 @@ fun DropdownMenuField(label: String, items: List<String>) {
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            items.forEach { selection ->
+            items.forEach { item ->
                 DropdownMenuItem(
-                    text = { Text(selection) },
+                    text = { Text(item, color = Color.Black) },
                     onClick = {
-                        selectedText = selection
+                        onItemSelected(item)
                         expanded = false
                     }
                 )
             }
         }
     }
-}
-
-// Componente para un TextField mejorado con bordes y colores
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun CustomTextField(label: String) {
-    TextField(
-        value = "",
-        onValueChange = {},
-        placeholder = { Text(label, color = Color.Gray) },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        shape = RoundedCornerShape(12.dp),
-        colors = TextFieldDefaults.textFieldColors(
-            containerColor = Color.White,
-            focusedIndicatorColor = Color(0xFF6200EE),
-            unfocusedIndicatorColor = Color(0xFFBDBDBD)
-        )
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DatosScreenPreview() {
-    DatosScreen(navController = rememberNavController())
 }

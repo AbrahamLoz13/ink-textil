@@ -1,129 +1,171 @@
 package com.example.inktextil.ui.screens
 
-import androidx.compose.foundation.background
+import android.net.Uri
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
+import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
+import com.example.inktextil.data.Diseno
+import com.example.inktextil.data.DisenoRepository
 import com.example.inktextil.ui.components.NavBar
-import com.example.inktextil.ui.components.TopBar
-
+import kotlinx.coroutines.launch
 @Composable
-fun DisenoScreen(navController: NavHostController) {
-    var nombre by remember { mutableStateOf("") }
-    var descripcion by remember { mutableStateOf("") }
-    var talla by remember { mutableStateOf("Seleccionar") }
-    var color by remember { mutableStateOf("Seleccionar") }
-    var tipoCuello by remember { mutableStateOf("Seleccionar") }
-    var largo by remember { mutableStateOf("Seleccionar") }
+fun DisenoScreen(
+    repository: DisenoRepository = DisenoRepository(),
+    navController: NavController
+) {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        TopBar(navController)
+    var nombre by remember { mutableStateOf(TextFieldValue("")) }
+    var descripcion by remember { mutableStateOf(TextFieldValue("")) }
+    var imagenUri by remember { mutableStateOf<Uri?>(null) }
+    var mostrarTarjeta by remember { mutableStateOf(false) }
 
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        imagenUri = uri
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(bottom = 90.dp) // espacio para que el scroll no tape con navbar
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Text(text = "MI DISEÑO", fontSize = 20.sp, color = Color.Black)
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
-            Row(modifier = Modifier.fillMaxWidth()) {
-                Box(
+            OutlinedTextField(
+                value = nombre,
+                onValueChange = { nombre = it },
+                label = { Text("Nombre del diseño") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            OutlinedTextField(
+                value = descripcion,
+                onValueChange = { descripcion = it },
+                label = { Text("Descripción") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Button(onClick = { launcher.launch("image/*") }) {
+                Text("Seleccionar imagen")
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            imagenUri?.let { uri ->
+                Image(
+                    painter = rememberAsyncImagePainter(uri),
+                    contentDescription = "Imagen seleccionada",
                     modifier = Modifier
-                        .size(120.dp)
-                        .background(Color.Gray, shape = RoundedCornerShape(8.dp)),
-                    contentAlignment = Alignment.Center
+                        .size(200.dp)
+                        .padding(8.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            ) {
+                Button(
+                    onClick = {
+                        if (nombre.text.isNotBlank() && descripcion.text.isNotBlank()) {
+                            coroutineScope.launch {
+                                try {
+                                    val diseno = Diseno(
+                                        nombre = nombre.text,
+                                        descripcion = descripcion.text
+                                    )
+                                    repository.guardarDiseno(diseno)
+                                    Toast.makeText(context, "Diseño guardado correctamente", Toast.LENGTH_SHORT).show()
+                                } catch (e: Exception) {
+                                    Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                                }
+                            }
+                        } else {
+                            Toast.makeText(context, "Completa todos los campos", Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(8.dp)
                 ) {
-                    Icon(
-                        painter = painterResource(android.R.drawable.ic_menu_gallery),
-                        contentDescription = "Imagen",
-                        tint = Color.White
-                    )
+                    Text("Guardar diseño")
                 }
-                Spacer(modifier = Modifier.width(8.dp))
-                Column(modifier = Modifier.weight(1f)) {
-                    OutlinedTextField(
-                        value = nombre,
-                        onValueChange = { nombre = it },
-                        label = { Text("Nombre") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    OutlinedTextField(
-                        value = descripcion,
-                        onValueChange = { descripcion = it },
-                        label = { Text("Descripción") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
+
+                Button(
+                    onClick = { mostrarTarjeta = true },
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text("Mostrar diseño")
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            if (mostrarTarjeta && nombre.text.isNotBlank() && descripcion.text.isNotBlank() && imagenUri != null) {
+                Spacer(modifier = Modifier.height(24.dp))
 
-            Column {
-                DropdownButton("Talla", listOf("S", "M", "L", "XL"), talla) { talla = it }
-                DropdownButton("Color", listOf("Rojo", "Azul", "Negro", "Blanco"), color) { color = it }
-                DropdownButton("Tipo de cuello", listOf("Redondo", "V", "Cuello alto"), tipoCuello) { tipoCuello = it }
-                DropdownButton("Largo", listOf("Corto", "Medio", "Largo"), largo) { largo = it }
+                Card(
+                    shape = RoundedCornerShape(16.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Image(
+                            painter = rememberAsyncImagePainter(imagenUri),
+                            contentDescription = "Diseño",
+                            modifier = Modifier.size(200.dp)
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(text = "Nombre: ${nombre.text}", style = MaterialTheme.typography.titleMedium)
+                        Text(text = "Descripción: ${descripcion.text}", style = MaterialTheme.typography.bodyMedium)
+                    }
+                }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                Button(onClick = { /* Guardar lógica */ }) {
-                    Text("Guardar")
-                }
-                Button(onClick = { /* Eliminar lógica */ }, colors = ButtonDefaults.buttonColors(Color.Red)) {
-                    Text("Eliminar")
-                }
-
-
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-            NavBar(navController)
-
+            Spacer(modifier = Modifier.height(90.dp)) // espacio extra final
         }
 
-
-
-    }
-
-
-}
-
-@Composable
-fun DropdownButton(label: String, options: List<String>, selected: String, onOptionSelected: (String) -> Unit) {
-    var expanded by remember { mutableStateOf(false) }
-
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Text(text = label, fontSize = 14.sp, color = Color.Black)
-        Button(onClick = { expanded = true }, modifier = Modifier.fillMaxWidth()) {
-            Text(selected)
-        }
-        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            options.forEach { option ->
-                DropdownMenuItem(text = { Text(option) }, onClick = {
-                    onOptionSelected(option)
-                    expanded = false
-                })
-            }
+        // NavBar fija abajo
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+        ) {
+            NavBar(navController = navController)
         }
     }
-}
-
-@Preview
-@Composable
-fun PreviewDisenoScreen() {
-    DisenoScreen(navController = NavHostController(LocalContext.current))
 }

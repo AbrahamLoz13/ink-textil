@@ -1,27 +1,28 @@
 package com.example.inktextil.ui.screens
 
 import android.util.Patterns
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun ForgotPasswordScreen(navController: NavController) {
     var email by remember { mutableStateOf("") }
     var emailError by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val auth = FirebaseAuth.getInstance()
+    var isLoading by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -30,13 +31,16 @@ fun ForgotPasswordScreen(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(100.dp))
+
         Text(
             text = "Recuperar contraseña",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 24.dp)
         )
+
         Spacer(modifier = Modifier.height(100.dp))
+
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
@@ -46,9 +50,7 @@ fun ForgotPasswordScreen(navController: NavController) {
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Email
             ),
-            keyboardActions = KeyboardActions(
-                onDone = { /* Acción cuando se presiona Done */ }
-            )
+            keyboardActions = KeyboardActions(onDone = {})
         )
 
         if (emailError) {
@@ -68,12 +70,43 @@ fun ForgotPasswordScreen(navController: NavController) {
                     emailError = true
                 } else {
                     emailError = false
-                    // Aquí iría la lógica para enviar el correo de recuperación
+                    isLoading = true
+                    auth.sendPasswordResetEmail(email)
+                        .addOnCompleteListener { task ->
+                            isLoading = false
+                            if (task.isSuccessful) {
+                                Toast.makeText(
+                                    context,
+                                    "Correo de recuperación enviado. Revisa tu bandeja.",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                                navController.navigate("login") {
+                                    popUpTo("forgot") { inclusive = true }
+                                }
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "Error: ${task.exception?.message}",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        }
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !isLoading
         ) {
-            Text("Enviar correo de recuperación")
+            if (isLoading) {
+                CircularProgressIndicator(
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    strokeWidth = 2.dp,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Enviando...")
+            } else {
+                Text("Enviar correo de recuperación")
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -82,10 +115,4 @@ fun ForgotPasswordScreen(navController: NavController) {
             Text(text = "Volver al inicio de sesión")
         }
     }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun ForgotPasswordScreenPreview() {
-    ForgotPasswordScreen(navController = rememberNavController())
 }
