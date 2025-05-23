@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -21,18 +22,33 @@ import androidx.navigation.compose.rememberNavController
 import com.example.inktextil.R
 import com.example.inktextil.ui.components.NavBar
 import com.example.inktextil.ui.components.TopBar
-import com.google.android.gms.common.util.CollectionUtils.listOf
 
 data class Article(val title: String, val image: Int, val description: String, val route: String)
 
 @Composable
 fun ArticlesScreen(navController: NavHostController) {
+    val featuredProducts = listOf(
+        Article("Oferta Camiseta", R.drawable.logopa, "Camiseta en descuento por tiempo limitado.", "detallesArticulo"),
+        Article("Nueva Sudadera", R.drawable.sudaderaong, "Sudadera edición limitada recién llegada.", "sudaderasScreen"),
+        Article("Playera Estampada", R.drawable.logopa, "Diseño exclusivo con estampado moderno.", "detallesArticulo"),
+        Article("Conjunto Deportivo", R.drawable.logopan, "Conjunto cómodo y resistente para entrenar.", "pantalonesScreen"),
+        Article("Gorra Clásica", R.drawable.gorralog, "Estilo retro con bordado personalizado.", "gorrasScreen")
+    )
+
     val articles = listOf(
         Article("Camisetas", R.drawable.logopa, "Explora nuestra colección de camisetas de alta calidad.", "detallesArticulo"),
         Article("Sudaderas", R.drawable.sudaderaong, "Descubre sudaderas cómodas y con diseños únicos.", "sudaderasScreen"),
         Article("Pantalones", R.drawable.logopan, "Variedad de pantalones para cualquier ocasión.", "pantalonesScreen"),
         Article("Gorras", R.drawable.gorralog, "Elige entre múltiples estilos de gorras ajustables.", "gorrasScreen"),
         Article("Chaquetas", R.drawable.logocha, "Chaquetas ligeras y modernas para cualquier temporada.", "chaquetasScreen")
+    )
+
+    val bottomSuggestions = listOf(
+        Article("Accesorios Nuevos", R.drawable.gorralog, "Explora los accesorios más recientes.", "gorrasScreen"),
+        Article("Chaqueta Impermeable", R.drawable.logocha, "Perfecta para días lluviosos.", "chaquetasScreen"),
+        Article("Pantalón Jogger", R.drawable.logopan, "Ideal para outfits casuales y cómodos.", "pantalonesScreen"),
+        Article("Playera Básica", R.drawable.logopa, "Un básico que no puede faltar.", "detallesArticulo"),
+        Article("Sudadera Oversize", R.drawable.sudaderaong, "Tendencia actual para todos los estilos.", "sudaderasScreen")
     )
 
     Scaffold(
@@ -56,9 +72,46 @@ fun ArticlesScreen(navController: NavHostController) {
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
+                item {
+                    Text(
+                        text = "Destacados",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
+                    )
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        items(featuredProducts) { article ->
+                            MiniArticleCard(article) {
+                                navController.navigate(article.route)
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+
                 items(articles) { article ->
                     ArticleCard(article) {
                         navController.navigate(article.route)
+                    }
+                }
+
+                item {
+                    Text(
+                        text = "Sugerencias",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(start = 8.dp, top = 16.dp, bottom = 8.dp)
+                    )
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        items(bottomSuggestions) { article ->
+                            MiniArticleCard(article) {
+                                navController.navigate(article.route)
+                            }
+                        }
                     }
                 }
             }
@@ -108,6 +161,36 @@ fun ArticleCard(article: Article, onClick: () -> Unit) {
                     Text("Ver productos")
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun MiniArticleCard(article: Article, onClick: () -> Unit) {
+    Card(
+        modifier = Modifier
+            .width(180.dp)
+            .clickable { onClick() },
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+    ) {
+        Column(modifier = Modifier.padding(8.dp)) {
+            Image(
+                painter = painterResource(id = article.image),
+                contentDescription = article.title,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .height(100.dp)
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = article.title,
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.onSecondaryContainer
+            )
         }
     }
 }
