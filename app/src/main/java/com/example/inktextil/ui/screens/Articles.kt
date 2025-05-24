@@ -104,7 +104,8 @@ fun ArticlesScreen(navController: NavHostController) {
 
     } else {
         Scaffold(
-            topBar = { TopBar(navController) }
+            topBar = { TopBar(navController) },
+            bottomBar = { NavBar(navController) }
 
         ) { paddingValues ->
 
