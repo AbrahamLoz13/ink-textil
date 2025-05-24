@@ -1,5 +1,6 @@
 package com.example.inktextil.ui.screens
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -12,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,6 +29,9 @@ data class Article(val title: String, val image: Int, val description: String, v
 
 @Composable
 fun ArticlesScreen(navController: NavHostController) {
+    val configuration = LocalConfiguration.current
+    val isPortrait = configuration.orientation == Configuration.ORIENTATION_PORTRAIT
+
     val featuredProducts = listOf(
         Article("Oferta Camiseta", R.drawable.logopa, "Camiseta en descuento por tiempo limitado.", "detallesArticulo"),
         Article("Nueva Sudadera", R.drawable.sudaderaong, "Sudadera edición limitada recién llegada.", "sudaderasScreen"),
@@ -51,72 +56,82 @@ fun ArticlesScreen(navController: NavHostController) {
         Article("Sudadera Oversize", R.drawable.sudaderaong, "Tendencia actual para todos los estilos.", "sudaderasScreen")
     )
 
-    Scaffold(
-        topBar = { TopBar(navController) },
-        bottomBar = { NavBar(navController) }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp)
-        ) {
-            Text(
-                text = "Artículos Disponibles",
-                style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                item {
-                    Text(
-                        text = "Destacados",
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
-                    )
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        items(featuredProducts) { article ->
-                            MiniArticleCard(article) {
-                                navController.navigate(article.route)
+    if(isPortrait){
+        Scaffold(
+            topBar = {TopBar(navController)},
+            bottomBar = {NavBar(navController)}
+        ){ paddingValues ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(16.dp)
+            ){
+                Text(
+                    text = "Artículos Disponibles",
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    item {
+                        SectionTitle("Destacados")
+                        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            items(featuredProducts) { article ->
+                                MiniArticleCard(article) { navController.navigate(article.route) }
                             }
                         }
                     }
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
 
-                items(articles) { article ->
-                    ArticleCard(article) {
-                        navController.navigate(article.route)
+                    items(articles) { article ->
+                        ArticleCard(article) { navController.navigate(article.route) }
                     }
-                }
 
-                item {
-                    Text(
-                        text = "Sugerencias",
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(start = 8.dp, top = 16.dp, bottom = 8.dp)
-                    )
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        items(bottomSuggestions) { article ->
-                            MiniArticleCard(article) {
-                                navController.navigate(article.route)
+                    item {
+                        SectionTitle("Sugerencias")
+                        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            items(bottomSuggestions) { article ->
+                                MiniArticleCard(article) { navController.navigate(article.route) }
                             }
                         }
                     }
                 }
             }
         }
+
+    } else {
+        Scaffold(
+            topBar = { TopBar(navController) }
+
+        ) { paddingValues ->
+
+            LazyRow(
+                modifier = Modifier.fillMaxSize().padding(paddingValues),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+
+            ) {
+                items(articles) { article ->
+                    Box(modifier = Modifier.width(300.dp)) {
+                        ArticleCard(article) { navController.navigate(article.route) }
+                    }
+                }
+            }
+
     }
+        }
+    }
+
+
+@Composable
+fun SectionTitle(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.titleMedium,
+        modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
+    )
 }
 
 @Composable
