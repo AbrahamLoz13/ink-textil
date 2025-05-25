@@ -28,7 +28,7 @@ fun NavBar(navController: NavController) {
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.primaryContainer)
             .navigationBarsPadding() // 👈 Esto evita que se empalme con la barra del sistema
-            .padding(vertical = 12.dp, horizontal = 16.dp),
+            .padding(vertical = 6.dp, horizontal = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         val items = listOf(
