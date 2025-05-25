@@ -93,6 +93,15 @@ fun LoginScreen(navController: NavHostController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+
+            Image(
+                painter = painterResource(id = R.drawable.logo),
+                contentDescription = "Logo InkTextil",
+                modifier = Modifier
+                    .size(120.dp)
+                    .padding(bottom = 16.dp)
+            )
+
             Text("Iniciar Sesión", fontSize = 24.sp, fontWeight = FontWeight.Bold)
 
             OutlinedTextField(
@@ -123,6 +132,7 @@ fun LoginScreen(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
+            // Botón de Ingresar
             Button(
                 onClick = {
                     if (username.isNotBlank() && password.isNotBlank()) {
@@ -141,10 +151,14 @@ fun LoginScreen(navController: NavHostController) {
                         Toast.makeText(context, "Rellena los campos", Toast.LENGTH_SHORT).show()
                     }
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(40.dp)
+                    .width(280.dp),
             ) {
                 Text("Ingresar")
             }
+
 
             Spacer(modifier = Modifier.height(20.dp))
             Text("Registrarse vía...")
@@ -200,7 +214,7 @@ fun LoginScreen(navController: NavHostController) {
         }
     }
 }
-
+// SocialButton
 @Composable
 fun SocialButton(
     iconRes: Int,
@@ -214,7 +228,8 @@ fun SocialButton(
         onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
-            .height(50.dp)
+            .height(40.dp)
+            .width(280.dp)
             .clip(RoundedCornerShape(12.dp)),
         colors = ButtonDefaults.buttonColors(containerColor = bgColor)
     ) {
