@@ -1,40 +1,78 @@
 package com.example.inktextil.ui.screens
 
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.IntOffset
 import androidx.navigation.NavController
 import kotlinx.coroutines.delay
-import com.example.inktextil.R // Importa el paquete R para acceder a los recursos
+import kotlinx.coroutines.launch
+import com.example.inktextil.R
+import kotlin.math.roundToInt
 
 @Composable
 fun SplashScreen(navController: NavController) {
-    // Espera 2 segundos y navega a LoginScreen
+    val scope = rememberCoroutineScope()
+
+    // Animaciones
+    val offsetY = remember { Animatable(100f) }
+    val alpha = remember { Animatable(0f) }
+
     LaunchedEffect(Unit) {
-        delay(2000)
+        // Animar entrada del logo
+        launch {
+            offsetY.animateTo(
+                targetValue = 0f,
+                animationSpec = tween(durationMillis = 2000, easing = EaseOut)
+            )
+        }
+        launch {
+            alpha.animateTo(
+                targetValue = 1f,
+                animationSpec = tween(durationMillis = 2000)
+            )
+        }
+
+        // Espera después de la animación
+        delay(3000)
         navController.navigate("login") {
-            popUpTo("splash") { inclusive = true } // Elimina SplashScreen de la pila
+            popUpTo("splash") { inclusive = true }
         }
     }
 
-    // UI de la Splash Screen
+    // Fondo con degradado
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.linearGradient(
+                    colors = listOf(
+                        Color(0xFF00C6FF),
+                        Color(0xFF000000)
+                    )
+                )
+            ),
         contentAlignment = Alignment.Center
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.offset { IntOffset(0, offsetY.value.roundToInt()) }
+                .alpha(alpha.value)
         ) {
-            // Usa el logo desde drawable
             Image(
-                painter = painterResource(id = R.drawable.logo), // Asegúrate de que el archivo se llama logo.png o logo.xml
+                painter = painterResource(id = R.drawable.logo),
                 contentDescription = "Logo de INK TEXTIL",
                 modifier = Modifier.size(120.dp)
             )
@@ -45,7 +83,7 @@ fun SplashScreen(navController: NavController) {
                 text = "INK TEXTIL",
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
+                color = Color.White
             )
         }
     }
