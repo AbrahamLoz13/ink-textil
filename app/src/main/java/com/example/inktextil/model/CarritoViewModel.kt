@@ -2,7 +2,8 @@ package com.example.inktextil.ui.model
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
-import com.example.inktextil.ui.screens.ShirtItem
+import com.example.inktextil.model.ShirtItem
+import com.example.inktextil.ui.screens.JacketItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -59,9 +60,17 @@ class CarritoViewModel : ViewModel() {
     }
 
     private fun calcularTotal() {
-        val totalCalculado = _carrito.sumOf {
-            it.price.replace("$", "").replace("MXN", "").trim().toDoubleOrNull() ?: 0.0
+        val totalCalculado = _carrito.sumOf { item ->
+            try {
+                val priceString = item.price?.toString() ?: "0.0"
+                priceString.replace(Regex("[^\\d.]"), "").toDoubleOrNull() ?: 0.0
+            } catch (e: Exception) {
+                0.0
+            }
         }
         _total.update { totalCalculado }
     }
+
+
 }
+
