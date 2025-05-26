@@ -16,18 +16,29 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.inktextil.model.ShirtItem
 import com.example.inktextil.ui.model.CarritoViewModel
-import com.example.inktextil.ui.screens.ShirtItem
+import com.example.inktextil.ui.screens.JacketItem
 import kotlinx.coroutines.launch
-
 @Composable
 fun JacketCard(
-    jacket: ShirtItem,
+    jacket: JacketItem,
     carritoViewModel: CarritoViewModel,
     snackbarHostState: SnackbarHostState
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val isWishlisted = carritoViewModel.wishlist.contains(jacket)
+
+    // ✅ Convertir JacketItem a ShirtItem
+    val shirtItem = ShirtItem(
+        title = jacket.title,
+        description = jacket.description,
+        size = jacket.size,
+        color = jacket.color,
+        price = jacket.price,
+        imageRes = jacket.imageRes
+    )
+
+    val isWishlisted = carritoViewModel.wishlist.contains(shirtItem)
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -35,6 +46,7 @@ fun JacketCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
+
             Image(
                 painter = painterResource(id = jacket.imageRes),
                 contentDescription = jacket.title,
@@ -44,16 +56,31 @@ fun JacketCard(
             )
 
             Spacer(modifier = Modifier.height(8.dp))
+
             Text(jacket.title, fontSize = 18.sp, fontWeight = FontWeight.Bold)
             Text(jacket.description)
             Text("Talla: ${jacket.size} | Color: ${jacket.color}")
-            Text(jacket.price, fontWeight = FontWeight.Bold)
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = "$${"%.2f".format(
+                    jacket.price
+                        .replace("$", "")
+                        .replace("MXN", "")
+                        .trim()
+                        .toDoubleOrNull() ?: 0.0
+                )} MXN",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             Button(
                 onClick = {
-                    carritoViewModel.agregarAlCarrito(jacket)
+                    carritoViewModel.agregarAlCarrito(shirtItem)
                     coroutineScope.launch {
                         snackbarHostState.showSnackbar("Agregado al carrito: ${jacket.title}")
                     }
@@ -63,14 +90,15 @@ fun JacketCard(
                 Text("Agregar al carrito")
             }
 
-            // Botón de wishlist (estrella)
             IconButton(
                 onClick = {
-                    carritoViewModel.toggleWishlist(jacket)
+                    carritoViewModel.toggleWishlist(shirtItem)
                     coroutineScope.launch {
                         snackbarHostState.showSnackbar(
-                            if (isWishlisted) "Eliminado de la wishlist: ${jacket.title}"
-                            else "Agregado a la wishlist: ${jacket.title}"
+                            if (isWishlisted)
+                                "Eliminado de la wishlist: ${jacket.title}"
+                            else
+                                "Agregado a la wishlist: ${jacket.title}"
                         )
                     }
                 },

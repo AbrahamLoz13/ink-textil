@@ -1,11 +1,12 @@
 package com.example.inktextil.data
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-
-@Serializable
 data class Diseno(
-    val userId: Int = 1,
-    @SerialName("title") val nombre: String,
-    @SerialName("body") val descripcion: String
+    val nombre: String = "",
+    val descripcion: String = "",
+    val talla: String = "",
+    val cuello: String = "",
+    val corte: String = "",
+    val precio: Double = 0.0,
+    val imagenUrl: String = "",
+    val uid: String = ""
 )

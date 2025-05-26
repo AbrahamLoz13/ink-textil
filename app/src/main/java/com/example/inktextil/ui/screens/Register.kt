@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -128,12 +129,37 @@ fun RegisterScreen(navController: NavHostController) {
             onClick = {
                 val emailText = email.text.trim()
                 val passwordText = password.text
+                val usernameText = username.text.trim()
 
-                if (emailText.isNotEmpty() && passwordText.isNotEmpty()) {
+                if (emailText.isNotEmpty() && passwordText.isNotEmpty() && usernameText.isNotEmpty()) {
                     Firebase.auth.createUserWithEmailAndPassword(emailText, passwordText)
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
-                                showSuccessDialog = true
+                                val user = Firebase.auth.currentUser
+                                val uid = user?.uid
+                                val db = Firebase.firestore
+
+                                val userData = hashMapOf(
+                                    "username" to usernameText,
+                                    "correo" to emailText
+                                )
+
+                                if (uid != null) {
+                                    db.collection("usuarios").document(uid)
+                                        .set(userData)
+                                        .addOnSuccessListener {
+                                            showSuccessDialog = true
+                                        }
+                                        .addOnFailureListener { e ->
+                                            Toast.makeText(
+                                                context,
+                                                "Error al guardar en Firestore: ${e.message}",
+                                                Toast.LENGTH_LONG
+                                            ).show()
+                                        }
+                                } else {
+                                    Toast.makeText(context, "No se pudo obtener el UID", Toast.LENGTH_LONG).show()
+                                }
                             } else {
                                 Toast.makeText(
                                     context,
