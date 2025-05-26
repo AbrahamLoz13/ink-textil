@@ -1,217 +1,259 @@
 package com.example.inktextil.ui.screens
 
 import android.widget.Toast
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.OffsetMapping
-import androidx.compose.ui.text.input.TransformedText
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.inktextil.model.*
+import com.example.inktextil.model.ShirtItem
 import com.example.inktextil.ui.components.NavBar
 import com.example.inktextil.ui.components.TopBar
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.navigation.compose.rememberNavController
 import com.example.inktextil.ui.model.CarritoViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CheckoutScreen(navController: NavHostController, carritoViewModel: CarritoViewModel) {
+fun CheckoutScreen(
+    navController: NavHostController,
+    carritoViewModel: CarritoViewModel,
+    userViewModel: UsuarioViewModel = viewModel()
+) {
     val context = LocalContext.current
-
-    var street by remember { mutableStateOf("") }
-    var number by remember { mutableStateOf("") }
-    var postalCode by remember { mutableStateOf("") }
-    var city by remember { mutableStateOf("") }
-    var country by remember { mutableStateOf("México") }
-    var cardNumber by remember { mutableStateOf("") }
-    var expiryDate by remember { mutableStateOf("") }
-    var cvv by remember { mutableStateOf("") }
-    var paymentMethod by remember { mutableStateOf("Tarjeta") }
-    var saveCard by remember { mutableStateOf(false) }
-
+    val carrito by remember { derivedStateOf { carritoViewModel.carrito } }
     val total by carritoViewModel.total.collectAsState()
-    val carrito = carritoViewModel.carrito
+
+    LaunchedEffect(Unit) {
+        userViewModel.cargarDatosUsuario()
+    }
+
+    val usuario = userViewModel.usuarioData
+    val direcciones = usuario.direcciones
+    val direccionSeleccionada = usuario.direccionSeleccionada
+    val metodos = usuario.metodosPago
+    val metodoSeleccionado = usuario.metodoPagoSeleccionado
+
+    var nuevaDireccion by remember { mutableStateOf(Direccion()) }
+    var mostrarNuevaDireccion by remember { mutableStateOf(false) }
+
+    var nuevoMetodo by remember { mutableStateOf(PaymentMethod(expiryMonth = "01", expiryYear = "2025")) }
+    var mostrarNuevoPago by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = { TopBar(navController) },
         bottomBar = { NavBar(navController) }
-    ) { paddingValues ->
+    ) { padding ->
         Column(
-            modifier = Modifier
+            Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .background(Color(0xFFF5F5F5))
                 .verticalScroll(rememberScrollState())
+                .padding(padding)
+                .padding(16.dp)
         ) {
-            AddressSection(street, number, postalCode, city, country,
-                onStreetChange = { street = it },
-                onNumberChange = { number = it },
-                onPostalChange = { postalCode = it },
-                onCityChange = { city = it },
-                onCountryChange = { country = it }
-            )
+            Text("Dirección de Envío", fontSize = 20.sp, fontWeight = FontWeight.Bold)
 
-            PaymentSection(
-                cardNumber, expiryDate, cvv, paymentMethod, saveCard,
-                onCardNumberChange = { cardNumber = it },
-                onExpiryChange = { expiryDate = it },
-                onCVVChange = { cvv = it },
-                onMethodChange = { paymentMethod = it },
-                onSaveCardChange = { saveCard = it }
-            )
+            direcciones.forEachIndexed { index, dir ->
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 6.dp)
+                        .clickable { userViewModel.seleccionarDireccion(index) },
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (index == direccionSeleccionada) Color(0xFFE8F5E9) else Color.White
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Column(Modifier.padding(12.dp)) {
+                        Text("${dir.nombreReceptor} (${dir.numeroTelefono})", fontWeight = FontWeight.Bold)
+                        Text("${dir.calle} ${dir.numero}, ${dir.colonia}, ${dir.ciudad}, CP ${dir.codigoPostal}")
+                    }
+                }
+            }
 
-            SummarySection(carrito = carrito, total = total)
+            OutlinedButton(
+                onClick = { mostrarNuevaDireccion = !mostrarNuevaDireccion },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Agregar nueva dirección")
+            }
+
+            if (mostrarNuevaDireccion) {
+                Column {
+                    CustomTextField("Nombre del receptor", nuevaDireccion.nombreReceptor) {
+                        nuevaDireccion = nuevaDireccion.copy(nombreReceptor = it)
+                    }
+                    CustomTextField("Teléfono", nuevaDireccion.numeroTelefono) {
+                        nuevaDireccion = nuevaDireccion.copy(numeroTelefono = it)
+                    }
+                    CustomTextField("Calle", nuevaDireccion.calle) {
+                        nuevaDireccion = nuevaDireccion.copy(calle = it)
+                    }
+                    CustomTextField("Número", nuevaDireccion.numero) {
+                        nuevaDireccion = nuevaDireccion.copy(numero = it)
+                    }
+                    CustomTextField("Colonia", nuevaDireccion.colonia) {
+                        nuevaDireccion = nuevaDireccion.copy(colonia = it)
+                    }
+                    CustomTextField("Ciudad", nuevaDireccion.ciudad) {
+                        nuevaDireccion = nuevaDireccion.copy(ciudad = it)
+                    }
+                    CustomTextField("Código Postal", nuevaDireccion.codigoPostal) {
+                        nuevaDireccion = nuevaDireccion.copy(codigoPostal = it)
+                    }
+                    Button(
+                        onClick = {
+                            if (nuevaDireccion.nombreReceptor.isBlank() || nuevaDireccion.numeroTelefono.isBlank()) {
+                                Toast.makeText(context, "Faltan campos", Toast.LENGTH_SHORT).show()
+                            } else {
+                                userViewModel.agregarDireccion(nuevaDireccion)
+                                nuevaDireccion = Direccion()
+                                mostrarNuevaDireccion = false
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Guardar dirección")
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text("Método de Pago", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            metodos.forEachIndexed { index, metodo ->
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 6.dp)
+                        .clickable { userViewModel.seleccionarMetodoPago(index) },
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (index == metodoSeleccionado) Color(0xFFBBDEFB) else Color.White
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Column(Modifier.padding(12.dp)) {
+                        Text("•••• ${metodo.lastFourDigits}", fontWeight = FontWeight.Bold)
+                        Text("Vence: ${metodo.expiryMonth}/${metodo.expiryYear}")
+                        Text("Dirección: ${metodo.address}")
+                    }
+                }
+            }
+
+            OutlinedButton(
+                onClick = { mostrarNuevoPago = !mostrarNuevoPago },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Agregar nuevo método de pago")
+            }
+
+            if (mostrarNuevoPago) {
+                Column {
+                    CustomTextField("Nombre en tarjeta", nuevoMetodo.nameOnCard) {
+                        nuevoMetodo = nuevoMetodo.copy(nameOnCard = it)
+                    }
+                    CustomTextField("Número de tarjeta", nuevoMetodo.cardNumber) {
+                        if (it.length <= 16)
+                            nuevoMetodo = nuevoMetodo.copy(cardNumber = it, lastFourDigits = it.takeLast(4))
+                    }
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        DropdownField(
+                            label = "Mes",
+                            options = (1..12).map { it.toString().padStart(2, '0') },
+                            selected = nuevoMetodo.expiryMonth,
+                            onSelected = { nuevoMetodo = nuevoMetodo.copy(expiryMonth = it) },
+                            modifier = Modifier.weight(1f)
+                        )
+                        DropdownField(
+                            label = "Año",
+                            options = (2024..2030).map { it.toString() },
+                            selected = nuevoMetodo.expiryYear,
+                            onSelected = { nuevoMetodo = nuevoMetodo.copy(expiryYear = it) },
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                    CustomTextField("Dirección", nuevoMetodo.address) {
+                        nuevoMetodo = nuevoMetodo.copy(address = it)
+                    }
+                    Button(
+                        onClick = {
+                            if (nuevoMetodo.cardNumber.length == 16) {
+                                userViewModel.agregarMetodoPago(nuevoMetodo)
+                                nuevoMetodo = PaymentMethod(expiryMonth = "01", expiryYear = "2025")
+                                mostrarNuevoPago = false
+                            } else {
+                                Toast.makeText(context, "Número de tarjeta inválido", Toast.LENGTH_SHORT).show()
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Guardar tarjeta")
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            SummarySection(carrito, total)
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             Button(
                 onClick = {
-                    val addressIncomplete = street.isBlank() || number.isBlank() || postalCode.isBlank() || city.isBlank() || country.isBlank()
-                    val cardInvalid = paymentMethod == "Tarjeta" && (cardNumber.length != 16 || expiryDate.isBlank() || cvv.length != 3)
+                    val direccion = direcciones.getOrNull(direccionSeleccionada ?: -1)
+                    val metodo = metodos.getOrNull(metodoSeleccionado ?: -1)
 
-                    if (addressIncomplete) {
-                        Toast.makeText(context, "Por favor completa todos los campos de dirección.", Toast.LENGTH_SHORT).show()
-                    } else if (paymentMethod == "Tarjeta" && cardInvalid) {
-                        Toast.makeText(context, "Por favor completa los datos de la tarjeta correctamente.", Toast.LENGTH_SHORT).show()
-                    } else {
-                        navController.navigate("confirm?street=$street&number=$number&postalCode=$postalCode&city=$city&country=$country&payment=$paymentMethod&total=${"%.2f".format(total)}")
+                    if (direccion == null || metodo == null) {
+                        Toast.makeText(context, "Selecciona dirección y método de pago", Toast.LENGTH_SHORT).show()
+                        return@Button
                     }
+
+                    val pedido = Pedido(
+                        productos = carrito,
+                        direccion = direccion,
+                        metodoPago = metodo,
+                        total = total
+                    )
+
+                    Toast.makeText(context, "Guardando pedido...", Toast.LENGTH_SHORT).show()
+
+                    userViewModel.guardarPedido(
+                        pedido,
+                        onSuccess = { id ->
+                            println("✅ Pedido guardado con id: $id")
+                            navController.navigate("confirmPedido/$id") {
+                                popUpTo("checkout") { inclusive = true }
+                            }
+                        },
+                        onError = {
+                            Toast.makeText(context, "Error al guardar el pedido", Toast.LENGTH_SHORT).show()
+                        }
+                    )
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
                     .height(52.dp),
-                shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
+                    containerColor = Color(0xFF1A237E),
+                    contentColor = Color.White
                 ),
-                elevation = ButtonDefaults.buttonElevation(
-                    defaultElevation = 4.dp,
-                    pressedElevation = 8.dp
-                )
+                shape = RoundedCornerShape(12.dp)
             ) {
-                Text("Confirmar pedido", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                Text("Finalizar compra", fontSize = 18.sp, fontWeight = FontWeight.Bold)
             }
-        }
-    }
-}
-@Composable
-fun AddressSection(
-    street: String, number: String, postalCode: String, city: String, country: String,
-    onStreetChange: (String) -> Unit, onNumberChange: (String) -> Unit,
-    onPostalChange: (String) -> Unit, onCityChange: (String) -> Unit,
-    onCountryChange: (String) -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(12.dp),
-        elevation = CardDefaults.cardElevation(4.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text("Dirección de envío", style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                OutlinedTextField(
-                    value = street, onValueChange = onStreetChange, label = { Text("Calle") },
-                    modifier = Modifier.weight(0.7f))
-                OutlinedTextField(
-                    value = number, onValueChange = onNumberChange, label = { Text("Número") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    modifier = Modifier.weight(0.3f))
-            }
-            Spacer(modifier = Modifier.height(12.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                OutlinedTextField(
-                    value = city, onValueChange = onCityChange, label = { Text("Ciudad") },
-                    modifier = Modifier.weight(0.7f))
-                OutlinedTextField(
-                    value = postalCode, onValueChange = { if (it.length <= 5) onPostalChange(it) },
-                    label = { Text("Código Postal") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    modifier = Modifier.weight(0.3f))
-            }
-            Spacer(modifier = Modifier.height(12.dp))
-            OutlinedTextField(
-                value = country, onValueChange = onCountryChange, label = { Text("País") },
-                modifier = Modifier.fillMaxWidth())
-        }
-    }
-}
 
-@Composable
-fun PaymentSection(
-    cardNumber: String, expiryDate: String, cvv: String,
-    paymentMethod: String, saveCard: Boolean,
-    onCardNumberChange: (String) -> Unit, onExpiryChange: (String) -> Unit,
-    onCVVChange: (String) -> Unit, onMethodChange: (String) -> Unit,
-    onSaveCardChange: (Boolean) -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(12.dp),
-        elevation = CardDefaults.cardElevation(4.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text("Método de pago", style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                listOf("Tarjeta", "Efectivo").forEach { method ->
-                    FilterChip(
-                        selected = method == paymentMethod,
-                        onClick = { onMethodChange(method) },
-                        label = { Text(method) }
-                    )
-                }
-            }
-            if (paymentMethod == "Tarjeta") {
-                Spacer(modifier = Modifier.height(16.dp))
-                OutlinedTextField(
-                    value = cardNumber,
-                    onValueChange = { if (it.length <= 16) onCardNumberChange(it) },
-                    label = { Text("Número de tarjeta") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    visualTransformation = CreditCardFilter(),
-                    modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text("1234 5678 9012 3456") }
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    OutlinedTextField(
-                        value = expiryDate, onValueChange = { if (it.length <= 5) onExpiryChange(it) },
-                        label = { Text("MM/AA") }, modifier = Modifier.weight(1f))
-                    OutlinedTextField(
-                        value = cvv, onValueChange = { if (it.length <= 3) onCVVChange(it) },
-                        label = { Text("CVV") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.weight(1f))
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(checked = saveCard, onCheckedChange = onSaveCardChange)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Guardar esta tarjeta para futuras compras")
-                }
-            }
         }
     }
 }
@@ -219,83 +261,57 @@ fun PaymentSection(
 @Composable
 fun SummarySection(carrito: List<ShirtItem>, total: Double) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(12.dp),
-        elevation = CardDefaults.cardElevation(4.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(4.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text("Resumen del pedido", style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
-            Spacer(modifier = Modifier.height(16.dp))
-            carrito.forEach { shirt ->
-                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 8.dp)) {
-                    Image(
-                        painter = painterResource(shirt.imageRes),
-                        contentDescription = shirt.title,
-                        modifier = Modifier.size(80.dp),
-                        contentScale = ContentScale.Crop
-                    )
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(shirt.title, fontWeight = FontWeight.Bold)
-                        Text("Talla: ${shirt.size}", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
-                        Text("Color: ${shirt.color}", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
-                    }
-                    Text(shirt.price, fontWeight = FontWeight.Bold)
+        Column(Modifier.padding(16.dp)) {
+            Text("Resumen del Pedido", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+            Spacer(modifier = Modifier.height(8.dp))
+            carrito.forEach {
+                Column(modifier = Modifier.padding(vertical = 4.dp)) {
+                    Text(it.title, fontWeight = FontWeight.Medium)
+                    Text("Talla: ${it.size} - Color: ${it.color}")
+                    Text("Precio: ${it.price}")
                 }
             }
-            Divider(modifier = Modifier.padding(vertical = 12.dp))
-            PriceRow("Subtotal", "$%.2f".format(total))
-            PriceRow("Envío", "$0.00")
-            PriceRow("Descuento", "-$0.00")
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text("Total", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-                Text("$%.2f MXN".format(total), style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
-            }
+            Divider(modifier = Modifier.padding(vertical = 8.dp))
+            Text("Total: $${"%.2f".format(total)} MXN", fontWeight = FontWeight.Bold, color = Color(0xFF1A237E))
         }
     }
 }
 
 @Composable
-fun PriceRow(label: String, value: String) {
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text(label, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
-        Text(value)
+fun DropdownField(
+    label: String,
+    options: List<String>,
+    selected: String,
+    onSelected: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var expanded by remember { mutableStateOf(false) }
+    Box(modifier = modifier) {
+        OutlinedTextField(
+            value = selected,
+            onValueChange = {},
+            readOnly = true,
+            label = { Text(label) },
+            trailingIcon = {
+                Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { expanded = true }
+        )
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            options.forEach {
+                DropdownMenuItem(text = { Text(it) }, onClick = {
+                    onSelected(it)
+                    expanded = false
+                })
+            }
+        }
     }
 }
 
-class CreditCardFilter : VisualTransformation {
-    override fun filter(text: AnnotatedString): TransformedText {
-        val trimmed = if (text.text.length >= 16) text.text.substring(0..15) else text.text
-        var out = ""
-        for (i in trimmed.indices) {
-            out += trimmed[i]
-            if (i % 4 == 3 && i != 15) out += " "
-        }
-        val creditCardOffsetTranslator = object : OffsetMapping {
-            override fun originalToTransformed(offset: Int): Int {
-                return when (offset) {
-                    in 0..3 -> offset
-                    in 4..7 -> offset + 1
-                    in 8..11 -> offset + 2
-                    in 12..15 -> offset + 3
-                    else -> 19
-                }
-            }
-            override fun transformedToOriginal(offset: Int): Int {
-                return when (offset) {
-                    in 0..4 -> offset
-                    in 5..9 -> offset - 1
-                    in 10..14 -> offset - 2
-                    in 15..19 -> offset - 3
-                    else -> 16
-                }
-            }
-        }
-        return TransformedText(AnnotatedString(out), creditCardOffsetTranslator)
-    }
-}
