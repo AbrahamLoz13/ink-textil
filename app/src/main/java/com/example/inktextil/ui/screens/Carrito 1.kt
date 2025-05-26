@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.inktextil.model.ShirtItem
 import com.example.inktextil.ui.components.NavBar
 import com.example.inktextil.ui.components.TopBar
 import com.example.inktextil.ui.model.CarritoViewModel
@@ -37,9 +38,12 @@ fun CarritoScreen(navController: NavHostController, carritoViewModel: CarritoVie
                 fontSize = 14.sp
             )
 
-            val totalPrice = cartItems.sumOf {
-                it.price.replace("$", "").replace("MXN", "").trim().toDoubleOrNull() ?: 0.0
+            val totalPrice = cartItems.sumOf { item ->
+                val rawPrice = item.price?.toString() ?: "0.0"
+                val numericPrice = rawPrice.replace(Regex("[^\\d.]"), "").toDoubleOrNull() ?: 0.0
+                numericPrice
             }
+
 
             Text(
                 text = "Total: \$${"%.2f".format(totalPrice)}",
@@ -101,7 +105,19 @@ fun CartItemCard(
                 Text(item.title, fontWeight = FontWeight.Bold)
                 Text(item.description)
                 Text("Talla: ${item.size} | Color: ${item.color}")
-                Text(item.price, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.height(4.dp)) // 💡 Nuevo
+
+                Text( // 💰 Precio
+                    text = "$${"%.2f".format(item.price.toString()
+                        .replace("$", "")
+                        .replace("MXN", "")
+                        .trim()
+                        .toDoubleOrNull() ?: 0.0)} MXN",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+
 
                 Text(
                     text = "Eliminar",

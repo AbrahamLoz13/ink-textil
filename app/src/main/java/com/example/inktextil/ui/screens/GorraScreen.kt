@@ -33,7 +33,6 @@ val capCatalog = listOf(
     CapItem("Gorra Dragon Ball", "Diseño de Goku.", R.drawable.gorralog, "Única", "Negro", "$190 MXN"),
     CapItem("Gorra NASA", "Estilo espacial moderno.", R.drawable.gorralog, "Única", "Blanco", "$200 MXN")
 )
-
 @Composable
 fun CatalogoGorras(
     navController: NavHostController,

@@ -18,6 +18,7 @@ import com.example.inktextil.ui.components.ShirtCard
 import com.example.inktextil.ui.components.TopBar
 import com.example.inktextil.ui.model.CarritoViewModel
 
+// Modelo de playera
 data class ShirtItem(
     val title: String,
     val description: String,
@@ -28,13 +29,32 @@ data class ShirtItem(
 )
 
 val shirtCatalog = listOf(
-    ShirtItem("Playera Pulp Fiction", "Diseño ideal para cinéfilos.", R.drawable.playera1, "M, L, XL", "Negro", "$250 MXN"),
-    ShirtItem("Playera Breaking Bad", "Diseño de la serie Breaking Bad.", R.drawable.playera1, "M, L", "Gris", "$270 MXN"),
-    ShirtItem("Playera Naruto", "Ideal para fans del anime Naruto.", R.drawable.playera1, "S, M, L", "Naranja", "$230 MXN"),
-    ShirtItem("Playera Star Wars", "Diseño de Darth Vader.", R.drawable.playera1, "M, L, XL", "Negro", "$260 MXN"),
-    ShirtItem("Playera Marvel", "Diseño de los Vengadores.", R.drawable.playera1, "S, M", "Azul", "$240 MXN"),
-    ShirtItem("Playera AC/DC", "Estilo rockero clásico.", R.drawable.playera1, "M, L, XL", "Negro", "$255 MXN")
+    ShirtItem(
+        "Playera Pulp Fiction", "Diseño ideal para cinéfilos.", R.drawable.playera1,
+        "M, L, XL", "Negro", "$250 MXN"
+    ),
+    ShirtItem(
+        "Playera Breaking Bad", "Diseño de la serie Breaking Bad.", R.drawable.playera1,
+        "M, L", "Gris", "$270 MXN"
+    ),
+    ShirtItem(
+        "Playera Naruto", "Ideal para fans del anime Naruto.", R.drawable.playera1,
+        "S, M, L", "Naranja", "$230 MXN"
+    ),
+    ShirtItem(
+        "Playera Star Wars", "Diseño de Darth Vader.", R.drawable.playera1,
+        "M, L, XL", "Negro", "$260 MXN"
+    ),
+    ShirtItem(
+        "Playera Marvel", "Diseño de los Vengadores.", R.drawable.playera1,
+        "S, M", "Azul", "$240 MXN"
+    ),
+    ShirtItem(
+        "Playera AC/DC", "Estilo rockero clásico.", R.drawable.playera1,
+        "M, L, XL", "Negro", "$255 MXN"
+    )
 )
+
 @Composable
 fun CatalogoPlayeras(
     navController: NavHostController,
@@ -56,7 +76,7 @@ fun CatalogoPlayeras(
                 .verticalScroll(rememberScrollState())
         ) {
             Text(
-                text = "Catálogo",
+                text = "Playeras",
                 fontSize = 30.sp,
                 fontWeight = FontWeight.ExtraBold,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
