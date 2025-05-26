@@ -16,8 +16,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.inktextil.model.ShirtItem
 import com.example.inktextil.ui.model.CarritoViewModel
-import com.example.inktextil.ui.screens.ShirtItem
+
 import kotlinx.coroutines.launch
 
 @Composable
@@ -27,7 +28,18 @@ fun ShirtCard(
     snackbarHostState: SnackbarHostState
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val isWishlisted = carritoViewModel.wishlist.contains(shirt)
+
+    val shirtItem = ShirtItem(
+        title = shirt.title,
+        description = shirt.description,
+        size = shirt.size,
+        color = shirt.color,
+        price = shirt.price,
+        imageRes = shirt.imageRes
+    )
+    val isWishlisted = carritoViewModel.wishlist.contains(shirtItem)
+
+
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -47,13 +59,27 @@ fun ShirtCard(
             Text(shirt.title, fontSize = 18.sp, fontWeight = FontWeight.Bold)
             Text(shirt.description)
             Text("Talla: ${shirt.size} | Color: ${shirt.color}")
-            Text(shirt.price, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = "$${
+                    "%.2f".format(
+                        shirt.price
+                            .replace("$", "")
+                            .replace("MXN", "")
+                            .trim()
+                            .toDoubleOrNull() ?: 0.0
+                    )
+                } MXN",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
-
             Button(
                 onClick = {
-                    carritoViewModel.agregarAlCarrito(shirt)
+                    carritoViewModel.agregarAlCarrito(shirtItem)
                     coroutineScope.launch {
                         snackbarHostState.showSnackbar("Agregado al carrito: ${shirt.title}")
                     }
@@ -65,7 +91,7 @@ fun ShirtCard(
 
             IconButton(
                 onClick = {
-                    carritoViewModel.toggleWishlist(shirt)
+                    carritoViewModel.toggleWishlist(shirtItem)
                     coroutineScope.launch {
                         snackbarHostState.showSnackbar(
                             if (isWishlisted) "Eliminado de la wishlist: ${shirt.title}"
@@ -81,6 +107,8 @@ fun ShirtCard(
                     tint = if (isWishlisted) Color.Yellow else Color.Gray
                 )
             }
+
+
         }
     }
 }

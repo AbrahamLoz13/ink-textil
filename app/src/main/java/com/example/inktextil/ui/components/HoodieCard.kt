@@ -16,9 +16,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.inktextil.model.ShirtItem
 import com.example.inktextil.ui.model.CarritoViewModel
 import com.example.inktextil.ui.screens.HoodieItem
-import com.example.inktextil.ui.screens.ShirtItem
 import kotlinx.coroutines.launch
 @Composable
 fun HoodieCard(
@@ -28,17 +28,16 @@ fun HoodieCard(
 ) {
     val coroutineScope = rememberCoroutineScope()
 
-    // Convertir HoodieItem a ShirtItem
+    // ✅ Convertir HoodieItem a ShirtItem
     val shirtItem = ShirtItem(
         title = hoodie.title,
         description = hoodie.description,
-        imageRes = hoodie.imageRes,
         size = hoodie.size,
         color = hoodie.color,
-        price = hoodie.price
+        price = hoodie.price,
+        imageRes = hoodie.imageRes
     )
 
-    // Verificar si el producto está en la wishlist
     val isWishlisted = carritoViewModel.wishlist.contains(shirtItem)
 
     Card(
@@ -47,6 +46,7 @@ fun HoodieCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
+
             Image(
                 painter = painterResource(id = hoodie.imageRes),
                 contentDescription = hoodie.title,
@@ -60,11 +60,24 @@ fun HoodieCard(
             Text(hoodie.title, fontSize = 18.sp, fontWeight = FontWeight.Bold)
             Text(hoodie.description)
             Text("Talla: ${hoodie.size} | Color: ${hoodie.color}")
-            Text(hoodie.price, fontWeight = FontWeight.Bold)
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = "$${"%.2f".format(
+                    hoodie.price
+                        .replace("$", "")
+                        .replace("MXN", "")
+                        .trim()
+                        .toDoubleOrNull() ?: 0.0
+                )} MXN",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Botón para agregar al carrito
             Button(
                 onClick = {
                     carritoViewModel.agregarAlCarrito(shirtItem)
@@ -77,14 +90,15 @@ fun HoodieCard(
                 Text("Agregar al carrito")
             }
 
-            // Botón para agregar a la wishlist (estrella)
             IconButton(
                 onClick = {
                     carritoViewModel.toggleWishlist(shirtItem)
                     coroutineScope.launch {
                         snackbarHostState.showSnackbar(
-                            if (isWishlisted) "Eliminado de la wishlist: ${hoodie.title}"
-                            else "Agregado a la wishlist: ${hoodie.title}"
+                            if (isWishlisted)
+                                "Eliminado de la wishlist: ${hoodie.title}"
+                            else
+                                "Agregado a la wishlist: ${hoodie.title}"
                         )
                     }
                 },

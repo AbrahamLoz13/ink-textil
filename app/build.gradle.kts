@@ -61,23 +61,32 @@ dependencies {
     // Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
 
-    // Firebase productos específicos
-    implementation("com.google.firebase:firebase-analytics")
+
+    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation("com.google.firebase:firebase-storage-ktx")
     implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-firestore-ktx")
+
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
+    // Firebase productos específicos
+    implementation(libs.firebase.analytics)
+    implementation(libs.google.firebase.auth.ktx)
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.firebase.storage.ktx)
 
     // Google Sign-In
-    implementation("com.google.android.gms:play-services-auth:20.7.0")
+    implementation(libs.play.services.auth)
 
     // Retrofit + OkHttp + Kotlinx Serialization
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation(libs.retrofit)
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
-    implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation(libs.retrofit2.kotlinx.serialization.converter)
+    implementation(libs.kotlinx.serialization.json)
 
     // Exif (opcional para imágenes desde almacenamiento)
-    implementation("androidx.exifinterface:exifinterface:1.4.1")
+    implementation(libs.androidx.exifinterface)
 
     // Testing
     testImplementation(libs.junit)
