@@ -16,10 +16,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.inktextil.model.ShirtItem
 import com.example.inktextil.ui.model.CarritoViewModel
 import com.example.inktextil.ui.screens.CapItem
-import com.example.inktextil.ui.screens.ShirtItem
 import kotlinx.coroutines.launch
+
 
 @Composable
 fun CapCard(
@@ -32,10 +33,10 @@ fun CapCard(
     val shirtItem = ShirtItem(
         title = cap.title,
         description = cap.description,
-        imageRes = cap.imageRes,
         size = cap.size,
         color = cap.color,
-        price = cap.price
+        price = cap.price,
+        imageRes = cap.imageRes
     )
 
     val isWishlisted = carritoViewModel.wishlist.contains(shirtItem)
@@ -46,6 +47,7 @@ fun CapCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
+
             Image(
                 painter = painterResource(id = cap.imageRes),
                 contentDescription = cap.title,
@@ -55,10 +57,24 @@ fun CapCard(
             )
 
             Spacer(modifier = Modifier.height(8.dp))
+
             Text(cap.title, fontSize = 18.sp, fontWeight = FontWeight.Bold)
             Text(cap.description)
             Text("Talla: ${cap.size} | Color: ${cap.color}")
-            Text(cap.price, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = "$${"%.2f".format(
+                    cap.price
+                        .replace("$", "")
+                        .replace("MXN", "")
+                        .trim()
+                        .toDoubleOrNull() ?: 0.0
+                )} MXN",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
 

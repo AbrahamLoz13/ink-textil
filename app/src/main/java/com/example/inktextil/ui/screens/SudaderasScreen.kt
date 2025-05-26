@@ -35,7 +35,6 @@ val hoodieCatalog = listOf(
     HoodieItem("Sudadera Marvel", "Diseño de los Vengadores.", R.drawable.sudaderaong, "S, M", "Azul marino", "$460 MXN"),
     HoodieItem("Sudadera Looney Tunes", "Diseño clásico animado.", R.drawable.sudaderaong, "M, L, XL", "Gris", "$440 MXN")
 )
-
 @Composable
 fun CatalogoSudaderas(
     navController: NavHostController,

@@ -1,5 +1,6 @@
 package com.example.inktextil.ui.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.inktextil.model.ShirtItem
 import com.example.inktextil.ui.components.NavBar
 import com.example.inktextil.ui.components.TopBar
 import com.example.inktextil.ui.model.CarritoViewModel
@@ -81,13 +83,42 @@ fun WishlistItemCard(
 
             Spacer(modifier = Modifier.width(12.dp))
 
-            Column(modifier = Modifier.weight(1f)) {
-                Text(item.title, fontWeight = FontWeight.Bold)
-                Text(item.description)
-                Text("Talla: ${item.size} | Color: ${item.color}")
-                Text(item.price, fontWeight = FontWeight.Bold)
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 8.dp)
+            ) {
+                Text(
+                    text = item.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+                if (!item.description.isNullOrBlank()) {
+                    Text(
+                        text = item.description,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.Gray
+                    )
+                }
 
                 Text(
+                    text = "Talla: ${item.size} | Color: ${item.color}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = "$${"%.2f".format(item.price)} MXN",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+
+            }
+
+
+            Text(
                     text = "Eliminar",
                     color = Color.Red,
                     modifier = Modifier.clickable { onRemove() }
@@ -95,8 +126,9 @@ fun WishlistItemCard(
             }
         }
     }
-}
 
+
+@SuppressLint("ViewModelConstructorInComposable")
 @Preview(showBackground = true)
 @Composable
 fun WishListScreenPreview() {
