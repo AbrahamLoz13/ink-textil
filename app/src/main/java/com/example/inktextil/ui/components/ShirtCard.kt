@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ShirtCard(
-    shirt: ShirtItem,
+    shirt: com.example.inktextil.ui.screens.ShirtItem,
     carritoViewModel: CarritoViewModel,
     snackbarHostState: SnackbarHostState
 ) {

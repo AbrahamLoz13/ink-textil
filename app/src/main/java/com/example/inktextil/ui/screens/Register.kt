@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.inktextil.model.UsuarioData
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -126,8 +127,7 @@ fun RegisterScreen(navController: NavHostController) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
-            onClick = {
-                val emailText = email.text.trim()
+            onClick = {val emailText = email.text.trim()
                 val passwordText = password.text
                 val usernameText = username.text.trim()
 
@@ -139,14 +139,15 @@ fun RegisterScreen(navController: NavHostController) {
                                 val uid = user?.uid
                                 val db = Firebase.firestore
 
-                                val userData = hashMapOf(
-                                    "username" to usernameText,
-                                    "correo" to emailText
+                                val nuevoUsuario = UsuarioData(
+                                    username = usernameText,
+                                    correo = emailText
+                                    // el resto de los campos quedan como por defecto
                                 )
 
                                 if (uid != null) {
                                     db.collection("usuarios").document(uid)
-                                        .set(userData)
+                                        .set(nuevoUsuario)
                                         .addOnSuccessListener {
                                             showSuccessDialog = true
                                         }

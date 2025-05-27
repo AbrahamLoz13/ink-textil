@@ -1,6 +1,5 @@
 package com.example.inktextil.ui.screens
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -33,8 +32,14 @@ fun DatosScreen(navController: NavHostController, viewModel: UsuarioViewModel = 
     var ciudad by remember { mutableStateOf("") }
     var cp by remember { mutableStateOf("") }
 
-    var correo by remember { mutableStateOf(usuario.correo) }
-    var username by remember { mutableStateOf(usuario.username) }
+    var correo by remember { mutableStateOf("") }
+    var username by remember { mutableStateOf("") }
+
+    // 🔁 Llenar campos con datos del usuario cuando se cargan
+    LaunchedEffect(usuario) {
+        if (usuario.correo.isNotBlank()) correo = usuario.correo
+        if (usuario.username.isNotBlank()) username = usuario.username
+    }
 
     LaunchedEffect(Unit) {
         viewModel.cargarDatosUsuario()
