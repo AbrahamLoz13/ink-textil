@@ -142,7 +142,7 @@ fun RegisterScreen(navController: NavHostController) {
                                 val nuevoUsuario = UsuarioData(
                                     username = usernameText,
                                     correo = emailText
-                                    // el resto de los campos quedan como por defecto
+                                    // el resto de los campos quedan como por defect
                                 )
 
                                 if (uid != null) {
