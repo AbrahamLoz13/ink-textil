@@ -60,7 +60,7 @@ fun Menu(navController: NavHostController) {
                     Triple("Datos", Icons.Default.Person, "datos"),
                     Triple("Pagos", Icons.Default.Star, "pagos"),
                     Triple("Mis diseños", Icons.Default.AddCircle, "misdiseños"),
-                    Triple("Wish list", Icons.Default.FavoriteBorder, "wishlist"),
+
                     Triple("Historial", Icons.Default.Create, "historial"),
 
                 )
